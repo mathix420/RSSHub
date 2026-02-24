@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -37,7 +38,8 @@ async function handler() {
     const $ = load(response.data);
     const list = $('div.list_right_con ul li')
         .slice(0, 10)
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const a = item.find('a');
             return {
@@ -45,8 +47,7 @@ async function handler() {
                 link: new URL(a.attr('href'), 'http://gs.xjtu.edu.cn/').href,
                 pubDate: parseDate(item.find('span.time').text()),
             };
-        })
-        .get();
+        });
 
     return {
         title: '西安交通大学研究生院 - 通知公告',

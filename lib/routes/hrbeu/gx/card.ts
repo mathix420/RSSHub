@@ -1,7 +1,9 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 const rootUrl = 'http://news.hrbeu.edu.cn';
 
 export const route: Route = {
@@ -29,13 +31,13 @@ async function handler(ctx) {
         .replaceAll(/[\n\r ]/g, '');
 
     const card = $('li.clearfix')
-        .map((_, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('div.list-right-tt').text(),
             pubDate: parseDate($(item).find('.news-date-li').text(), 'DDYYYY-MM'),
             link: $(item).find('a').attr('href'),
             description: $(item).find('div.list-right-p').text(),
-        }))
-        .get();
+        }));
 
     return {
         title: '工学-' + bigTitle,

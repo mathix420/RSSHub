@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -20,11 +21,11 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| Software        | Id          |
-  | --------------- | ----------- |
-  | O\&O ShutUp10++ | shutup10    |
-  | O\&O AppBuster  | ooappbuster |
-  | O\&O Lanytix    | oolanytix   |
-  | O\&O DeskInfo   | oodeskinfo  |`,
+| --------------- | ----------- |
+| O&O ShutUp10++ | shutup10    |
+| O&O AppBuster  | ooappbuster |
+| O&O Lanytix    | oolanytix   |
+| O&O DeskInfo   | oodeskinfo  |`,
 };
 
 async function handler(ctx) {

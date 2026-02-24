@@ -1,4 +1,4 @@
-import { Data } from '@/types';
+import type { Data } from '@/types';
 
 /**
  * This function should be used by RSSHub middleware only.
@@ -19,8 +19,10 @@ const json = (data: Data) => {
             id: item.guid || item.id || item.link,
             url: item.link,
             title: item.title,
+            // content_html and content_text are each optional strings — but one or both must be present
             content_html: (item.content && item.content.html) || item.description || item.title,
             content_text: item.content && item.content.text,
+            summary: item.description,
             image: item.image || item.itunes_item_image,
             banner_image: item.banner,
             date_published: item.pubDate,
@@ -28,17 +30,19 @@ const json = (data: Data) => {
             authors: typeof item.author === 'string' ? [{ name: item.author }] : item.author,
             tags: typeof item.category === 'string' ? [item.category] : item.category,
             language: item.language,
-            attachments: item.enclosure_url
-                ? [
-                      {
-                          url: item.enclosure_url,
-                          mime_type: item.enclosure_type,
-                          title: item.enclosure_title,
-                          size_in_bytes: item.enclosure_length,
-                          duration_in_seconds: item.itunes_duration,
-                      },
-                  ]
-                : undefined,
+            attachments:
+                item.attachments ||
+                (item.enclosure_url
+                    ? [
+                          {
+                              url: item.enclosure_url,
+                              mime_type: item.enclosure_type,
+                              title: item.enclosure_title,
+                              size_in_bytes: item.enclosure_length,
+                              duration_in_seconds: item.itunes_duration,
+                          },
+                      ]
+                    : undefined),
             _extra: item._extra || undefined,
         })),
     };

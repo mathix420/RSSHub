@@ -1,9 +1,11 @@
-import { Route } from '@/types';
-import { processItems } from './utils';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
+
+import { processItems } from './utils';
 
 const host = 'http://www.pbc.gov.cn';
 
@@ -26,12 +28,12 @@ async function handler() {
     const response = await got.post(url);
     const $ = load(response.data);
     const list = $('li.clearfix')
-        .map((_index, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('a').text(),
             link: new URL($(item).find('a').attr('href'), host).href,
             pubDate: timezone(parseDate($(item).find('span.fr').text(), 'YYYY-MM-DD'), +8),
-        }))
-        .get();
+        }));
 
     const items = await processItems(list);
 

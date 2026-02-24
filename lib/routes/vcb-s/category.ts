@@ -1,12 +1,9 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderDescription } from './templates/post';
 
 const rootUrl = 'https://vcb-s.com';
 const cateAPIUrl = `${rootUrl}/wp-json/wp/v2/categories`;
@@ -35,8 +32,8 @@ export const route: Route = {
     handler,
     url: 'vcb-s.com/',
     description: `| 作品项目 | 科普系列 | 计划与日志 |
-  | -------- | -------- | ---------- |
-  | works    | kb       | planlog    |`,
+| -------- | -------- | ---------- |
+| works    | kb       | planlog    |`,
 };
 
 async function handler(ctx) {
@@ -61,7 +58,7 @@ async function handler(ctx) {
     const data = response.data;
 
     const items = data.map((item) => {
-        const description = art(path.join(__dirname, 'templates/post.art'), {
+        const description = renderDescription({
             post: item.content.rendered.replaceAll(/<pre class="js-medie-info-detail.*?>(.*?)<\/pre>/gs, '<pre><code>$1</code></pre>').replaceAll(/<div.+?dw-box-download.+?>(.*?)<\/div>/gs, '<pre>$1</pre>'),
             medias: item._embedded['wp:featuredmedia'],
         });

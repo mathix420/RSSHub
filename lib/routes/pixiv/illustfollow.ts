@@ -1,11 +1,12 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import { getToken } from './token';
-import getIllustFollows from './api/get-illust-follows';
 import { config } from '@/config';
-import pixivUtils from './utils';
-import { parseDate } from '@/utils/parse-date';
 import ConfigNotFoundError from '@/errors/types/config-not-found';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import { parseDate } from '@/utils/parse-date';
+
+import getIllustFollows from './api/get-illust-follows';
+import { getToken } from './token';
+import pixivUtils from './utils';
 
 export const route: Route = {
     path: '/user/illustfollows',
@@ -24,6 +25,7 @@ export const route: Route = {
         supportBT: false,
         supportPodcast: false,
         supportScihub: false,
+        nsfw: true,
     },
     radar: [
         {
@@ -34,9 +36,9 @@ export const route: Route = {
     maintainers: ['ClarkeCheng'],
     handler,
     url: 'www.pixiv.net/bookmark_new_illust.php',
-    description: `:::warning
+    description: `::: warning
   Only for self-hosted
-  :::`,
+:::`,
 };
 
 async function handler() {

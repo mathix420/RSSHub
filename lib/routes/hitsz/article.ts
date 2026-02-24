@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -22,8 +23,8 @@ export const route: Route = {
     maintainers: ['xandery-geek'],
     handler,
     description: `| 校区要闻 | 媒体报道 | 综合新闻 | 校园动态 | 讲座论坛 | 热点专题 | 招标信息 | 重要关注 |
-  | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-  | id-116   | id-80    | id-75    | id-77    | id-78    | id-79    | id-81    | id-124   |`,
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| id-116   | id-80    | id-75    | id-77    | id-78    | id-79    | id-81    | id-124   |`,
 };
 
 async function handler(ctx) {

@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const baseTitle = '南京信息工程大学-教务处';
@@ -24,8 +25,8 @@ export const route: Route = {
     maintainers: ['gylidian'],
     handler,
     description: `| 教学要闻 | 学院教学 | 教务管理 | 教学研究 | 教务管理 | 教材建设 | 考试中心 |
-  | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-  | jxyw     | xyjx     | jwgl     | jxyj     | sjjx     | jcjs     | kszx     |`,
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| jxyw     | xyjx     | jwgl     | jxyj     | sjjx     | jcjs     | kszx     |`,
 };
 
 async function handler(ctx) {

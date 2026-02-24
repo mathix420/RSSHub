@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
@@ -24,9 +24,9 @@ export const route: Route = {
     maintainers: ['nczitzk', 'williamgateszhao'],
     handler,
     url: 'apod.nasa.govundefined',
-    description: `:::tip
+    description: `::: tip
   [NASA 中文](https://www.nasachina.cn/) 提供了每日天文图的中英双语图文说明，但在更新上偶尔略有一两天的延迟。
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

@@ -1,7 +1,9 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import { parseDate } from '@/utils/parse-date';
+
 import { baseUrl, puppeteerGet } from './utils';
 
 export const route: Route = {
@@ -46,12 +48,10 @@ async function handler(ctx) {
     return {
         title: '品葱 - 发现',
         link: url,
-        item: list
-            .map((_, item) => ({
-                title: $(item).find('h4 a').text().trim(),
-                link: baseUrl + $(item).find('h4 a').attr('href'),
-                pubDate: parseDate($(item).attr('data-created-at') * 1000),
-            }))
-            .get(),
+        item: list.toArray().map((item) => ({
+            title: $(item).find('h4 a').text().trim(),
+            link: baseUrl + $(item).find('h4 a').attr('href'),
+            pubDate: parseDate($(item).attr('data-created-at') * 1000),
+        })),
     };
 }

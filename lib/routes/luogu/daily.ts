@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -23,7 +24,7 @@ export const route: Route = {
         },
     ],
     name: '日报',
-    maintainers: ['LogicJake ', 'prnake ', 'nczitzk'],
+    maintainers: ['LogicJake', 'prnake', 'nczitzk'],
     handler,
     url: 'luogu.com.cn/discuss/47327',
 };

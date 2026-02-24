@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 const rootUrl = 'https://www.ithome.com/';
 
@@ -37,12 +38,12 @@ async function handler(ctx) {
     const response = await got(url);
     const $ = load(response.data);
     const list = $('ul.bl > li')
-        .map((_, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('h2 > a').text(),
             link: $(item).find('h2 > a').attr('href'),
             pubDate: timezone(parseDate($(item).find('div.c').attr('data-ot')), +8),
-        }))
-        .get();
+        }));
 
     const items = await Promise.all(
         list.map((item) =>

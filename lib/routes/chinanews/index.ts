@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
-import { load } from 'cheerio';
+import timezone from '@/utils/timezone';
 
 const rootUrl = 'https://www.chinanews.com.cn';
 
@@ -29,11 +30,11 @@ async function handler(ctx) {
     });
     const $ = load(response.data);
     const list = $('a', '.dd_bt')
-        .map((_, item) => ({
+        .toArray()
+        .map((item) => ({
             link: rootUrl + $(item).attr('href'),
             title: $(item).text(),
         }))
-        .get()
         .slice(0, ctx.req.query('limit') ? Math.min(Number.parseInt(ctx.req.query('limit')), 125) : 50);
 
     const items = await Promise.all(

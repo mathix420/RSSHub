@@ -1,8 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import { config } from '@/config';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { config } from '@/config';
-import { load } from 'cheerio';
 
 export const route: Route = {
     path: '/release/:version?',
@@ -21,7 +22,7 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 8.0 | 5.7 | 5.6 |
-  | --- | --- | --- |`,
+| --- | --- | --- |`,
 };
 
 async function handler(ctx) {

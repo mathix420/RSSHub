@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -27,9 +28,9 @@ export const route: Route = {
     handler,
     description: `The URL of the journal [Annual Review of Analytical Chemistry](https://www.annualreviews.org/journal/anchem) is \`https://www.annualreviews.org/journal/anchem\`, where \`anchem\` is the id of the journal, so the route for this journal is \`/annualreviews/anchem\`.
 
-  :::tip
+::: tip
   More jounals can be found in [Browse Journals](https://www.annualreviews.org/action/showPublications).
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

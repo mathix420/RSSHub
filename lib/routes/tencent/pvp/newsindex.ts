@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 const map = new Map([
     ['rm', { name: '热门', channelid: 1760 }],
     ['xw', { name: '新闻', channelid: 1761 }],
@@ -54,8 +55,8 @@ export const route: Route = {
     maintainers: ['Jeason0228', 'HenryQW'],
     handler,
     description: `| 全部 | 热门 | 新闻 | 公告 | 活动 | 赛事 | 优化 |
-  | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-  | all  | rm   | xw   | gg   | hd   | ss   | yh   |`,
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| all  | rm   | xw   | gg   | hd   | ss   | yh   |`,
 };
 
 async function handler(ctx) {

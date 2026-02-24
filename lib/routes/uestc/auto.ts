@@ -1,5 +1,6 @@
-import { Route } from '@/types';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import { parseDate } from '@/utils/parse-date';
 import puppeteer from '@/utils/puppeteer';
 
@@ -31,7 +32,7 @@ export const route: Route = {
 };
 
 async function handler() {
-    const browser = await puppeteer({ stealth: true });
+    const browser = await puppeteer();
     const page = await browser.newPage();
     await page.setRequestInterception(true);
     page.on('request', (request) => {
@@ -48,7 +49,8 @@ async function handler() {
     const items = $('dl.clearfix');
 
     const out = $(items)
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const newsTitle = item.find('a').text();
             const newsLink = host + item.find('a[href]').attr('href').slice(3);
@@ -59,8 +61,7 @@ async function handler() {
                 link: newsLink,
                 pubDate: newsPubDate,
             };
-        })
-        .get();
+        });
 
     return {
         title: '电子科技大学自动化学院通知',

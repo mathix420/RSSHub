@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import { isValidHost } from '@/utils/valid-host';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 function getKeysRecursive(dic, key, attr, array) {
     for (const v of Object.values(dic)) {
@@ -40,8 +41,8 @@ export const route: Route = {
     handler,
     url: 'huanqiu.com/',
     description: `| 国内新闻 | 国际新闻 | 军事 | 台海   | 评论    |
-  | -------- | -------- | ---- | ------ | ------- |
-  | china    | world    | mil  | taiwai | opinion |`,
+| -------- | -------- | ---- | ------ | ------- |
+| china    | world    | mil  | taiwai | opinion |`,
 };
 
 async function handler(ctx) {

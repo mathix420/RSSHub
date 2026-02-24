@@ -1,8 +1,10 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { JSDOM } from 'jsdom';
 import { CookieJar } from 'tough-cookie';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 const cookieJar = new CookieJar();
 const baseUrl = 'https://xueqiu.com';
 
@@ -14,7 +16,7 @@ export const route: Route = {
     features: {
         requireConfig: false,
         requirePuppeteer: false,
-        antiCrawler: false,
+        antiCrawler: true,
         supportBT: false,
         supportPodcast: false,
         supportScihub: false,
@@ -25,13 +27,18 @@ export const route: Route = {
         },
     ],
     name: '用户专栏',
-    maintainers: ['TonyRL'],
+    maintainers: ['TonyRL', 'pseudoyu'],
     handler,
 };
 
 async function handler(ctx) {
     const id = ctx.req.param('id');
     const pageUrl = `${baseUrl}/${id}/column`;
+
+    // Get cookie first
+    await got(baseUrl, {
+        cookieJar,
+    });
 
     const pageData = await got(pageUrl, {
         cookieJar,
@@ -48,6 +55,10 @@ async function handler(ctx) {
             page: 1,
         },
     });
+
+    if (!data.list) {
+        throw new Error('Error occurred, please refresh the page or try again after logging back into your account');
+    }
 
     const items = data.list.map((item) => ({
         title: item.title,

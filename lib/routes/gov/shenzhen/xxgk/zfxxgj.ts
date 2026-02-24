@@ -1,10 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
+
 const rootUrl = 'http://www.sz.gov.cn/cn/xxgk/zfxxgj/';
 
 const config = {
@@ -43,8 +45,8 @@ export const route: Route = {
     maintainers: ['laoxua'],
     handler,
     description: `| 通知公告 | 政府采购 | 资金信息 | 重大项目 |
-  | :------: | :------: | :------: | :------: |
-  |   tzgg   |   zfcg   |   zjxx   |   zdxm   |`,
+| :------: | :------: | :------: | :------: |
+|   tzgg   |   zfcg   |   zjxx   |   zdxm   |`,
 };
 
 async function handler(ctx) {

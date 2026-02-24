@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import dayjs from 'dayjs';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 export const route: Route = {
     path: '/exchangesys/:type',
@@ -19,8 +20,8 @@ export const route: Route = {
     maintainers: [],
     handler,
     description: `| 新闻通知 | 交换生项目 |
-  | -------- | ---------- |
-  | news     | proj       |`,
+| -------- | ---------- |
+| news     | proj       |`,
 };
 
 async function handler(ctx) {

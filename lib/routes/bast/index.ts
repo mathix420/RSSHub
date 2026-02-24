@@ -1,10 +1,11 @@
-import { Route } from '@/types';
-import { getSubPath } from '@/utils/common-utils';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import { getSubPath } from '@/utils/common-utils';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '*',
@@ -18,7 +19,7 @@ async function handler(ctx) {
     const limit = ctx.req.query('limit') ? Number.parseInt(ctx.req.query('limit')) : 50;
 
     const rootUrl = 'https://www.bast.net.cn';
-    const currentUrl = `${rootUrl}/${isNaN(colPath) ? colPath : `col/col${colPath}`}/`;
+    const currentUrl = `${rootUrl}/${Number.isNaN(colPath) ? colPath : `col/col${colPath}`}/`;
 
     const response = await got({
         method: 'get',

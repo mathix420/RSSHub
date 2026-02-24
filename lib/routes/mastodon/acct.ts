@@ -1,9 +1,11 @@
-import { Route, ViewType } from '@/types';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
+
 import utils from './utils';
 
 export const route: Route = {
     path: '/acct/:acct/statuses/:only_media?',
-    categories: ['social-media', 'popular'],
+    categories: ['social-media'],
     view: ViewType.SocialMedia,
     example: '/mastodon/acct/Mastodon@mastodon.social/statuses',
     parameters: {
@@ -35,7 +37,7 @@ However, you can still specify these route-specific configurations if you need t
 
 async function handler(ctx) {
     const acct = ctx.req.param('acct');
-    const only_media = ctx.req.param('only_media') ? 'true' : 'false';
+    const only_media = ctx.req.param('only_media') === 'true' ? 'true' : 'false';
 
     const { site, account_id } = await utils.getAccountIdByAcct(acct);
 

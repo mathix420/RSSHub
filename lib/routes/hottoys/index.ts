@@ -1,5 +1,6 @@
-import { Route } from '@/types';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import puppeteer from '@/utils/puppeteer';
 
 export const route: Route = {
@@ -39,7 +40,7 @@ async function handler() {
         waitUntil: 'domcontentloaded',
     });
     const response = await page.content();
-    page.close();
+    await page.close();
     const $ = load(response);
     const items = $('li.productListItem')
         .toArray()
@@ -54,7 +55,7 @@ async function handler() {
                 guid: a.attr('href'),
             };
         });
-    browser.close();
+    await browser.close();
     return {
         title: 'Hot Toys New Products',
         link: baseUrl,

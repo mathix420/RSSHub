@@ -1,10 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const handler = async (ctx) => {
     const { category = 'sy/gzdt_210283' } = ctx.req.param();
@@ -80,9 +80,9 @@ export const route: Route = {
     handler,
     example: '/81/81rc/sy/gzdt_210283',
     parameters: { category: '分类，默认为 `sy/gzdt_210283`，即工作动态，可在对应分类页 URL 中找到' },
-    description: `:::tip
+    description: `::: tip
   若订阅 [工作动态](https://81rc.81.cn/sy/gzdt_210283)，网址为 \`https://81rc.81.cn/sy/gzdt_210283\`。截取 \`https://81rc.81.cn/\` 到末尾的部分 \`sy/gzdt_210283\` 作为参数填入，此时路由为 [\`/81/81rc/sy/gzdt_210283\`](https://rsshub.app/81/81rc/sy/gzdt_210283)。
-  :::
+:::
   `,
     categories: ['government'],
 

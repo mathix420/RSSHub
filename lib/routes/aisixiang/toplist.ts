@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
-import { rootUrl, ossUrl, ProcessFeed } from './utils';
+import { ossUrl, ProcessFeed, rootUrl } from './utils';
 
 export const route: Route = {
     path: ['/ranking/:id?/:period?', '/toplist/:id?/:period?'],
@@ -12,8 +13,8 @@ export const route: Route = {
     maintainers: ['HenryQW', 'nczitzk'],
     handler,
     description: `| 文章点击排行 | 最近更新文章 | 文章推荐排行 |
-  | ------------ | ------------ | ------------ |
-  | 1            | 10           | 11           |`,
+| ------------ | ------------ | ------------ |
+| 1            | 10           | 11           |`,
 };
 
 async function handler(ctx) {

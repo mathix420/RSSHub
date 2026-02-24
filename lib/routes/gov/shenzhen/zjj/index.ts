@@ -1,9 +1,10 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 const config = {
     tzgg: {
@@ -34,8 +35,8 @@ export const route: Route = {
     maintainers: ['lonn'],
     handler,
     description: `| 通知公告 |
-  | :------: |
-  |   tzgg   |`,
+| :------: |
+|   tzgg   |`,
 };
 
 async function handler(ctx) {

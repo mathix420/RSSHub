@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/:id?',
@@ -22,8 +23,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 樊纲观点 | 综研国策 | 综研观察 | 综研专访 | 综研视点 | 银湖新能源 |
-  | -------- | -------- | -------- | -------- | -------- | ---------- |
-  | 102      | 152      | 150      | 153      | 154      | 151        |`,
+| -------- | -------- | -------- | -------- | -------- | ---------- |
+| 102      | 152      | 150      | 153      | 154      | 151        |`,
 };
 
 async function handler(ctx) {

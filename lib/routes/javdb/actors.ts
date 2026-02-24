@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import utils from './utils';
 
 export const route: Route = {
@@ -19,6 +20,7 @@ export const route: Route = {
         supportBT: false,
         supportPodcast: false,
         supportScihub: false,
+        nsfw: true,
     },
     radar: [
         {
@@ -31,8 +33,8 @@ export const route: Route = {
     handler,
     url: 'javdb.com/',
     description: `| 全部 | 可播放 | 單體作品 | 可下載 | 含字幕 |
-  | ---- | ------ | -------- | ------ | ------ |
-  |      | p      | s        | d      | c      |
+| ---- | ------ | -------- | ------ | ------ |
+|      | p      | s        | d      | c      |
 
   所有演员编号参见 [演員庫](https://javdb.com/actors)
 

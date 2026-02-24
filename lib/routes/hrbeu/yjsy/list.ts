@@ -1,8 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 const rootUrl = 'http://yjsy.hrbeu.edu.cn';
 
 export const route: Route = {
@@ -27,8 +29,8 @@ export const route: Route = {
     maintainers: ['Derekmini'],
     handler,
     description: `| 通知公告 | 新闻动态 | 学籍注册 | 奖助学金 | 其他 |
-  | :------: | :------: | :------: | :------: | :--: |
-  |   2981   |   2980   |   3009   |   3011   |  ... |`,
+| :------: | :------: | :------: | :------: | :--: |
+|   2981   |   2980   |   3009   |   3011   |  ... |`,
 };
 
 async function handler(ctx) {
@@ -49,7 +51,8 @@ async function handler(ctx) {
         .trim();
 
     const list = $('li.list_item')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             let link = $(item).find('a').attr('href');
             if (link.includes('page.htm')) {
                 link = `${rootUrl}${link}`;
@@ -59,8 +62,7 @@ async function handler(ctx) {
                 pubDate: parseDate($(item).find('span.Article_PublishDate').text()),
                 link,
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

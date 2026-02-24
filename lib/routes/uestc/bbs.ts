@@ -1,11 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import { config } from '@/config';
+import ConfigNotFoundError from '@/errors/types/config-not-found';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch'; // 统一使用的请求库
 import { parseDate } from '@/utils/parse-date'; // 解析日期的工具函数
 import timezone from '@/utils/timezone';
-import { config } from '@/config';
-import { load } from 'cheerio';
-import cache from '@/utils/cache';
-import ConfigNotFoundError from '@/errors/types/config-not-found';
 
 export const route: Route = {
     path: '/bbs/:types?',
@@ -35,7 +36,7 @@ export const route: Route = {
         supportScihub: false,
     },
     description: `
-:::tip
+::: tip
 仅支持自建，您需要设置以下配置才能正常使用：
 -   河畔cookie: \`UESTC_BBS_COOKIE\`
 -   Header中的授权字段: \`UESTC_BBS_AUTH_KEY\`

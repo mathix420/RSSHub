@@ -1,10 +1,11 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
-import timezone from '@/utils/timezone';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/blog/:type?/:time?/:sort?',
@@ -24,21 +25,21 @@ export const route: Route = {
     handler,
     description: `类型
 
-  | 精选      | 最新 | 热门 |
-  | --------- | ---- | ---- |
-  | recommend | new  | hot  |
+| 精选      | 最新 | 热门 |
+| --------- | ---- | ---- |
+| recommend | new  | hot  |
 
   时间
 
-  | 36 小时内精选博文 | 一周内精选博文 | 一月内精选博文 | 半年内精选博文 | 所有时间精选博文 |
-  | ----------------- | -------------- | -------------- | -------------- | ---------------- |
-  | 1                 | 2              | 3              | 4              | 5                |
+| 36 小时内精选博文 | 一周内精选博文 | 一月内精选博文 | 半年内精选博文 | 所有时间精选博文 |
+| ----------------- | -------------- | -------------- | -------------- | ---------------- |
+| 1                 | 2              | 3              | 4              | 5                |
 
   排序
 
-  | 按发表时间排序 | 按评论数排序 | 按点击数排序 |
-  | -------------- | ------------ | ------------ |
-  | 1              | 2            | 3            |`,
+| 按发表时间排序 | 按评论数排序 | 按点击数排序 |
+| -------------- | ------------ | ------------ |
+| 1              | 2            | 3            |`,
 };
 
 async function handler(ctx) {

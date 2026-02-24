@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const baseTitle = 'NUIST ESE（南信大环科院）';
@@ -24,8 +25,8 @@ export const route: Route = {
     maintainers: ['gylidian'],
     handler,
     description: `| 通知公告 | 新闻快讯 | 学术动态 | 学生工作 | 研究生教育 | 本科教育 |
-  | -------- | -------- | -------- | -------- | ---------- | -------- |
-  | tzgg1    | xwkx     | xsdt1    | xsgz1    | yjsjy1     | bkjy1    |`,
+| -------- | -------- | -------- | -------- | ---------- | -------- |
+| tzgg1    | xwkx     | xsdt1    | xsgz1    | yjsjy1     | bkjy1    |`,
 };
 
 async function handler(ctx) {

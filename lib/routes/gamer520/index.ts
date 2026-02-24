@@ -1,8 +1,9 @@
-import { Data, DataItem, Route } from '@/types';
+import type { Context } from 'hono';
+
+import type { Data, DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { Context } from 'hono';
 
 export const route: Route = {
     path: '/:category?/:order?',
@@ -21,9 +22,9 @@ export const route: Route = {
     url: 'www.gamer520.com/',
     description: `分类
 
-  | 所有 | Switch 游戏下载 | 金手指     | 3A 巨作 | switch 主题 | PC 游戏 |
-  | ---- | --------------- | ---------- | ------- | ----------- | ------- |
-  | all  | switchyouxi     | jinshouzhi | 3ajuzuo | zhuti       | pcgame  |`,
+| 所有 | Switch 游戏下载 | 金手指     | 3A 巨作 | switch 主题 | PC 游戏 |
+| ---- | --------------- | ---------- | ------- | ----------- | ------- |
+| all  | switchyouxi     | jinshouzhi | 3ajuzuo | zhuti       | pcgame  |`,
 };
 
 interface Post {

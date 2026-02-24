@@ -1,11 +1,12 @@
-import { Data, DataItem, Route } from '@/types';
+import { load } from 'cheerio';
+import type { Context } from 'hono';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Data, DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
-import type { Context } from 'hono';
 
 const baseUrl = 'https://gr.uestc.edu.cn/';
 const detailUrl = 'https://gr.uestc.edu.cn/';
@@ -51,9 +52,9 @@ export const route: Route = {
     handler,
     url: 'gr.uestc.edu.cn/',
     description: `\
-  | 重要公告  | 教学管理 | 学位管理 | 学生管理 | 就业实践 |
-  | --------- | -------- | -------- | -------- | -------- |
-  | important | teaching | degree   | student  | practice |`,
+| 重要公告  | 教学管理 | 学位管理 | 学生管理 | 就业实践 |
+| --------- | -------- | -------- | -------- | -------- |
+| important | teaching | degree   | student  | practice |`,
 };
 
 async function handler(ctx: Context): Promise<Data> {

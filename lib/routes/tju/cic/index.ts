@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -33,8 +34,8 @@ export const route: Route = {
     maintainers: ['AlanZeng423', 'SuperPung'],
     handler,
     description: `| College News | Notification | TJU Forum for CIC |
-  | :----------: | :----------: | :---------------: |
-  |     news     | notification |       forum       |`,
+| :----------: | :----------: | :---------------: |
+|     news     | notification |       forum       |`,
 };
 
 async function handler(ctx) {
@@ -86,7 +87,8 @@ async function handler(ctx) {
     } else {
         const $ = load(response.data);
         const list = $('.wenzi_list_ul > li')
-            .map((_index, item) => {
+            .toArray()
+            .map((item) => {
                 const href = $('a', item).attr('href');
                 const type = pageType(href);
                 return {
@@ -94,8 +96,7 @@ async function handler(ctx) {
                     link: type === 'in-site' ? cic_base_url + href : href,
                     type,
                 };
-            })
-            .get();
+            });
 
         const items = await Promise.all(
             list.map((item) => {
@@ -103,9 +104,8 @@ async function handler(ctx) {
                     case 'tju-cic':
                     case 'in-site':
                         return cache.tryGet(item.link, async () => {
-                            let detailResponse = null;
                             try {
-                                detailResponse = await got(item.link);
+                                const detailResponse = await got(item.link);
                                 const content = load(detailResponse.data);
                                 item.pubDate = timezone(parseDate(content('.news_info > span').first().text(), 'YYYY年MM月DD日 HH:mm'), +8);
                                 content('.news_tit').remove();

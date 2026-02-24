@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 export const route: Route = {
     path: ['/movie/playing', '/movie/playing/:score'],
@@ -32,7 +33,7 @@ async function handler(ctx) {
         title: `正在上映的${score ? `超过 ${score} 分的` : ''}电影`,
         link: `https://movie.douban.com/cinema/nowplaying/`,
         item: $('.list-item')
-            .get()
+            .toArray()
             .map((i) => {
                 const item = $(i);
                 const itemScore = Number.parseFloat(item.attr('data-score')) || 0;

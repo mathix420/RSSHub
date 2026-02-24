@@ -1,12 +1,10 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { art } from '@/utils/render';
-import path from 'node:path';
-import { parseDate } from '@/utils/parse-date';
-import { getCurrentPath } from '@/utils/helpers';
 import logger from '@/utils/logger';
-const __dirname = getCurrentPath(import.meta.url);
+import { parseDate } from '@/utils/parse-date';
+
+import { renderOfficialDescription } from '../templates/official';
 
 // 游戏id
 const GITS_MAP = {
@@ -53,12 +51,13 @@ class MiHoYoOfficialError extends Error {
 
 const getNewsList = async ({ gids, type, page_size, last_id }) => {
     const query = new URLSearchParams({
+        client_type: '4',
         gids,
         type,
         page_size,
         last_id,
     }).toString();
-    const url = `https://bbs-api.miyoushe.com/post/wapi/getNewsList?${query}`;
+    const url = `https://bbs-api-static.miyoushe.com/painter/wapi/getNewsList?${query}`;
     const response = await got({
         method: 'get',
         url,
@@ -86,11 +85,7 @@ const getPostContent = async (row, default_gid = '2') => {
         const author = fullRow?.user?.nickname || '';
         const content = fullRow?.post?.content || '';
         const tags = fullRow?.topics?.map((item) => item.name) || [];
-        const description = art(path.join(__dirname, '../templates/official.art'), {
-            hasCover: post.has_cover,
-            coverList: row.cover_list,
-            content,
-        });
+        const description = renderOfficialDescription(post.has_cover, row.cover_list, content);
         return {
             // 文章标题
             title: post.subject,
@@ -138,15 +133,15 @@ export const route: Route = {
     handler,
     description: `游戏 id
 
-  | 崩坏三 | 原神 | 崩坏二 | 未定事件簿 | 星穹铁道 | 绝区零 |
-  | ------ | ---- | ------ | ---------- | -------- | ------ |
-  | 1      | 2    | 3      | 4          | 6        | 8      |
+| 崩坏三 | 原神 | 崩坏二 | 未定事件簿 | 星穹铁道 | 绝区零 |
+| ------ | ---- | ------ | ---------- | -------- | ------ |
+| 1      | 2    | 3      | 4          | 6        | 8      |
 
   公告类型
 
-  | 公告 | 活动 | 资讯 |
-  | ---- | ---- | ---- |
-  | 1    | 2    | 3    |`,
+| 公告 | 活动 | 资讯 |
+| ---- | ---- | ---- |
+| 1    | 2    | 3    |`,
 };
 
 async function handler(ctx) {

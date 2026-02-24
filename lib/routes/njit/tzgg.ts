@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const url = 'https://www.njit.edu.cn/index/tzgg.htm';
@@ -32,29 +33,23 @@ export const route: Route = {
 };
 
 async function handler() {
-    const response = await got({
-        method: 'get',
-        url,
-        https: {
-            rejectUnauthorized: false,
-        },
-    });
+    const response = await got(url);
     const $ = load(response.body);
 
     const urlList = $('body')
         .find('span.text a')
-        .map((i, e) => $(e).attr('href'))
-        .get();
+        .toArray()
+        .map((e) => $(e).attr('href'));
 
     const titleList = $('body')
         .find('span.text a')
-        .map((i, e) => $(e).attr('title'))
-        .get();
+        .toArray()
+        .map((e) => $(e).attr('title'));
 
     const dateList = $('body')
         .find('span.date')
-        .map((i, e) => '20' + $(e).text().slice(1, 9))
-        .get();
+        .toArray()
+        .map((e) => '20' + $(e).text().slice(1, 9));
 
     const out = await Promise.all(
         urlList.map((itemUrl, index) => {
@@ -69,13 +64,7 @@ async function handler() {
                 return single;
             } else {
                 return cache.tryGet(itemUrl, async () => {
-                    const response = await got({
-                        method: 'get',
-                        url: itemUrl,
-                        https: {
-                            rejectUnauthorized: false,
-                        },
-                    });
+                    const response = await got(itemUrl);
                     const $ = load(response.body);
                     const single = {
                         title: $('title').text(),

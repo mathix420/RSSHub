@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
@@ -32,12 +32,12 @@ export const route: Route = {
     maintainers: ['blade0910'],
     handler,
     description: `| 类型    | type    |
-  | --------- | ---------- |
-  | 全部公告    | 5    |
-  | 产品发布    | 19   |
-  | 规则变更    | 21   |
-  | 维护公告    | 20   |
-  | 其他公告    | 22   |`,
+| --------- | ---------- |
+| 全部公告    | 5    |
+| 产品发布    | 19   |
+| 规则变更    | 21   |
+| 维护公告    | 20   |
+| 其他公告    | 22   |`,
 };
 
 async function handler(ctx) {

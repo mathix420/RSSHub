@@ -1,7 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { parseDate } from '@/utils/parse-date';
 import logger from '@/utils/logger';
+import { parseDate } from '@/utils/parse-date';
 import puppeteer from '@/utils/puppeteer';
 
 export const route: Route = {
@@ -22,9 +22,9 @@ export const route: Route = {
     handler,
     description: `-   \`options.lang\`, optional, language, eg. \`/fortnite/news/lang=en-US\`, common languages are listed below, more languages are available one the [official website](https://www.fortnite.com/news)
 
-  | English (default) | Spanish | Japanese | French | Korean | Polish |
-  | ----------------- | ------- | -------- | ------ | ------ | ------ |
-  | en-US             | es-ES   | ja       | fr     | ko     | pl     |`,
+| English (default) | Spanish | Japanese | French | Korean | Polish |
+| ----------------- | ------- | -------- | ------ | ------ | ------ |
+| en-US             | es-ES   | ja       | fr     | ko     | pl     |`,
 };
 
 async function handler(ctx) {
@@ -64,7 +64,7 @@ async function handler(ctx) {
     });
 
     await page.close();
-    browser.close();
+    await browser.close();
 
     const { blogList: list } = data;
     const items = await Promise.all(

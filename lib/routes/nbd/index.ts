@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/:id?',
@@ -28,8 +29,8 @@ export const route: Route = {
     handler,
     url: 'nbd.com.cn/',
     description: `| 头条 | 要闻 | 图片新闻 | 推荐 |
-  | ---- | ---- | -------- | ---- |
-  | 2    | 3    | 4        | 5    |`,
+| ---- | ---- | -------- | ---- |
+| 2    | 3    | 4        | 5    |`,
 };
 
 async function handler(ctx) {

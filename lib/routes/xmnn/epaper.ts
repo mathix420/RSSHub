@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/epaper/:id?',
@@ -28,8 +29,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 厦门日报 | 厦门晚报 | 海西晨报 | 城市捷报 |
-  | -------- | -------- | -------- | -------- |
-  | xmrb     | xmwb     | hxcb     | csjb     |`,
+| -------- | -------- | -------- | -------- |
+| xmrb     | xmwb     | hxcb     | csjb     |`,
 };
 
 async function handler(ctx) {

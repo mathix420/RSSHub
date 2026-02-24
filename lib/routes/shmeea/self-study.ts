@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -75,7 +76,7 @@ async function handler() {
     const data = response.data;
 
     const $ = load(data);
-    const list = $('#main > div.container > div > div.span9 > div.page-he  > div  > ul > li').get();
+    const list = $('#main > div.container > div > div.span9 > div.page-he  > div  > ul > li').toArray();
 
     const detail = await load_detail(list, cache);
 

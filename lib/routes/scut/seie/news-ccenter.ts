@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -26,7 +27,7 @@ export const route: Route = {
     maintainers: ['auto-bot-ty'],
     handler,
     url: 'www2.scut.edu.cn/ee/16285/list.htm',
-    description: `:::warning
+    description: `::: warning
 由于学院官网对非大陆 IP 的访问存在限制，需自行部署。
 :::`,
 };

@@ -1,7 +1,8 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import { getArchive, getProviderList, parseList, parseItem } from './utils';
 import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+
+import { getArchive, getProviderList, parseItem, parseList } from './utils';
 
 export const route: Route = {
     path: '/news/provider/:region/:providerId',
@@ -18,7 +19,10 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['hk.news.yahoo.com/', 'tw.news.yahoo.com/'],
+            source: ['hk.news.yahoo.com/'],
+        },
+        {
+            source: ['tw.news.yahoo.com/'],
         },
     ],
     name: '新聞來源',

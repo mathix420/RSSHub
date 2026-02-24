@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -42,12 +43,12 @@ async function handler(ctx) {
     const $ = load(response.data);
     const title = $('h1.block_title').text();
     const list = $('div.list_wrapper > div')
-        .map((_, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('div.title').text(),
             link: $(item).find('div.title > a').attr('href'),
             description: $(item).find('div.excerpt').text(),
         }))
-        .get()
         .filter((item) => item.link);
 
     const items = await Promise.all(

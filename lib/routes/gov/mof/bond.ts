@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 const domain = 'gks.mof.gov.cn';
 const theme = 'guozaiguanli';
@@ -26,9 +27,9 @@ export const route: Route = {
     handler,
     description: `#### 政府债券管理
 
-  | 国债管理工作动态 | 记账式国债 (含特别国债) 发行 | 储蓄国债发行 | 地方政府债券管理      |
-  | ---------------- | ---------------------------- | ------------ | --------------------- |
-  | gzfxgzdt         | gzfxzjs                      | gzfxdzs      | difangzhengfuzhaiquan |`,
+| 国债管理工作动态 | 记账式国债 (含特别国债) 发行 | 储蓄国债发行 | 地方政府债券管理      |
+| ---------------- | ---------------------------- | ------------ | --------------------- |
+| gzfxgzdt         | gzfxzjs                      | gzfxdzs      | difangzhengfuzhaiquan |`,
 };
 
 async function handler(ctx) {

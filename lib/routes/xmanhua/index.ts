@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -15,6 +16,7 @@ export const route: Route = {
         supportBT: false,
         supportPodcast: false,
         supportScihub: false,
+        nsfw: true,
     },
     radar: [
         {
@@ -61,21 +63,19 @@ async function handler(ctx) {
     }
     // 最新一话的地址
     const updatedOne = $('div.detail-list-form-title span.s a').attr('href');
-    const items = list
-        .map((index, item) => {
-            item = $(item);
-            const itemTitle = item.text();
-            const itemUrl = item.attr('href');
-            const itemDate = itemUrl === updatedOne ? parseDate(newOneDate) : '';
-            return {
-                title: itemTitle,
-                link: host + itemUrl,
-                auther: autherName,
-                pubDate: itemDate,
-                guid: host + itemUrl,
-            };
-        })
-        .get();
+    const items = list.toArray().map((item) => {
+        item = $(item);
+        const itemTitle = item.text();
+        const itemUrl = item.attr('href');
+        const itemDate = itemUrl === updatedOne ? parseDate(newOneDate) : '';
+        return {
+            title: itemTitle,
+            link: host + itemUrl,
+            auther: autherName,
+            pubDate: itemDate,
+            guid: host + itemUrl,
+        };
+    });
     const name = $('body > div.detail-info-1 > div > div > p.detail-info-title').text();
     const description_ = finished ? '已完结' : '连载中';
     return {

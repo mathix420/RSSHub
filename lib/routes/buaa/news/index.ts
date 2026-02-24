@@ -1,8 +1,9 @@
-import { Route, Data, DataItem } from '@/types';
-import { Context } from 'hono';
+import { load } from 'cheerio';
+import type { Context } from 'hono';
+
+import type { Data, DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -23,8 +24,8 @@ export const route: Route = {
     maintainers: ['AlanDecode'],
     handler,
     description: `| 综合新闻 | 信息公告 | 学术文化    | 校园风采 | 科教在线 | 媒体北航 | 专题新闻 | 北航人物 |
-  | -------- | -------- | ----------- | -------- | -------- | -------- | -------- | -------- |
-  | zhxw     | xxgg_new | xsjwhhd_new | xyfc_new | kjzx_new | mtbh_new | ztxw     | bhrw     |`,
+| -------- | -------- | ----------- | -------- | -------- | -------- | -------- | -------- |
+| zhxw     | xxgg_new | xsjwhhd_new | xyfc_new | kjzx_new | mtbh_new | ztxw     | bhrw     |`,
 };
 
 async function handler(ctx: Context): Promise<Data> {

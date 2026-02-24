@@ -1,10 +1,10 @@
-import got from '@/utils/got';
 import * as cheerio from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import cache from '@/utils/cache';
-
-import { Route } from '@/types';
 
 const handler = async (ctx) => {
     const { category = 'zxfb' } = ctx.req.param();
@@ -59,6 +59,6 @@ export const route: Route = {
     handler,
     url: 'www.12371.cn',
     description: `| 最新发布 |
-    | :------: |
-    |   zxfb   |`,
+| :------: |
+|   zxfb   |`,
 };

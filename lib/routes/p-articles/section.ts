@@ -1,8 +1,10 @@
-import { Route } from '@/types';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { rootUrl, ProcessFeed } from './utils';
+import ofetch from '@/utils/ofetch';
+
+import { ProcessFeed, rootUrl } from './utils';
 
 export const route: Route = {
     path: '/section/:section',
@@ -32,14 +34,14 @@ async function handler(ctx) {
     };
 
     const list = $('div.contect_box_04 > a')
-        .map(function () {
+        .toArray()
+        .map((element) => {
             const info = {
-                title: $(this).find('h1').text().trim(),
-                link: new URL($(this).attr('href'), rootUrl).href,
+                title: $(element).find('h1').text().trim(),
+                link: new URL($(element).attr('href'), rootUrl).href,
             };
             return info;
-        })
-        .get();
+        });
     list.unshift(topInfo);
 
     const items = await Promise.all(

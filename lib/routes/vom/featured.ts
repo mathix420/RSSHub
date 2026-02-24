@@ -1,8 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 const baseUrl = 'http://www.vom.mn';
 
 export const route: Route = {
@@ -28,8 +30,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| English | 日本語 | Монгол | Русский | 简体中文 |
-  | ------- | ------ | ------ | ------- | -------- |
-  | en      | ja     | mn     | ru      | zh       |`,
+| ------- | ------ | ------ | ------- | -------- |
+| en      | ja     | mn     | ru      | zh       |`,
 };
 
 async function handler(ctx) {

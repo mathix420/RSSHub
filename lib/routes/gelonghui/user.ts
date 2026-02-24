@@ -1,12 +1,15 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 import { parseItem } from './utils';
 
 export const route: Route = {
     path: '/user/:id',
     categories: ['finance'],
+    view: ViewType.Articles,
     example: '/gelonghui/user/5273',
     parameters: { id: '用户编号，可在用户页 URL 中找到' },
     features: {

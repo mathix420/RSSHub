@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 export const route: Route = {
     path: '/itnews/:channel',
     name: 'Unknown',
@@ -9,5 +10,5 @@ export const route: Route = {
 function handler(ctx) {
     const { channel } = ctx.req.param();
     const redirectTo = `/liulinblog/${channel}`;
-    ctx.redirect(redirectTo);
+    ctx.set('redirect', redirectTo);
 }

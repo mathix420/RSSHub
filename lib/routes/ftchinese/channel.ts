@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import utils from './utils';
 
 export const route: Route = {
@@ -17,9 +18,9 @@ export const route: Route = {
     name: 'FT 中文网',
     maintainers: ['HenryQW', 'xyqfer'],
     handler,
-    description: `:::tip
+    description: `::: tip
   -   不支持付费文章。
-  :::
+:::
 
   通过提取文章全文，以提供比官方源更佳的阅读体验。
 

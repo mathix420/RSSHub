@@ -1,11 +1,13 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import MarkdownIt from 'markdown-it';
+import pMap from 'p-map';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import MarkdownIt from 'markdown-it';
+
 const md = MarkdownIt();
-import asyncPool from 'tiny-async-pool';
 
 const baseUrl = 'https://www.luogu.com.cn';
 
@@ -64,31 +66,31 @@ async function handler() {
         )
     );
 
-    const result = [];
-    for await (const item of asyncPool(4, data.currentData.contests.result, (item) =>
-        cache.tryGet(`${baseUrl}/contest/${item.id}`, async () => {
-            const { data: response } = await got(`${baseUrl}/contest/${item.id}`);
-            const $ = load(response);
-            const data = JSON.parse(
-                decodeURIComponent(
-                    $('script')
-                        .text()
-                        .match(/decodeURIComponent\("(.*)"\)/)[1]
-                )
-            );
+    const result = await pMap(
+        data.currentData.contests.result,
+        (item) =>
+            cache.tryGet(`${baseUrl}/contest/${item.id}`, async () => {
+                const { data: response } = await got(`${baseUrl}/contest/${item.id}`);
+                const $ = load(response);
+                const data = JSON.parse(
+                    decodeURIComponent(
+                        $('script')
+                            .text()
+                            .match(/decodeURIComponent\("(.*)"\)/)[1]
+                    )
+                );
 
-            return {
-                title: item.name,
-                description: md.render(data.currentData.contest.description),
-                link: `${baseUrl}/contest/${item.id}`,
-                author: item.host.name,
-                pubDate: parseDate(item.startTime, 'X'),
-                category: [item.rated ? 'Rated' : null, typeMap.ruleType[item.ruleType], typeMap.visibilityType[item.visibilityType]].filter(Boolean),
-            };
-        })
-    )) {
-        result.push(item);
-    }
+                return {
+                    title: item.name,
+                    description: md.render(data.currentData.contest.description),
+                    link: `${baseUrl}/contest/${item.id}`,
+                    author: item.host.name,
+                    pubDate: parseDate(item.startTime, 'X'),
+                    category: [item.rated ? 'Rated' : null, typeMap.ruleType[item.ruleType], typeMap.visibilityType[item.visibilityType]].filter(Boolean),
+                };
+            }),
+        { concurrency: 4 }
+    );
 
     return {
         title: $('head title').text(),

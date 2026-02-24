@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { defaultLanguage, rootUrl, ProcessItems } from './utils';
+
+import { defaultLanguage, ProcessItems, rootUrl } from './utils';
 
 export const route: Route = {
     path: ['/users/:id/:type/:language?', '/:type/:id/:language?'],
@@ -8,8 +9,11 @@ export const route: Route = {
     maintainers: [],
     handler,
     description: `| Wanted     | Watched     | Owned     |
-  | ---------- | ----------- | --------- |
-  | userwanted | userwatched | userowned |`,
+| ---------- | ----------- | --------- |
+| userwanted | userwatched | userowned |`,
+    features: {
+        nsfw: true,
+    },
 };
 
 async function handler(ctx) {

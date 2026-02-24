@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 export const route: Route = {
     path: '/commercialpress/latest',
@@ -54,7 +55,8 @@ async function handler() {
 
     $ = load(newBookPage.data);
     const resultItem = $('.doulist-item')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             const $item = $(item);
 
             return {
@@ -63,8 +65,7 @@ async function handler() {
                 description: `<img src="${$item.find('.post img').attr('src')}" /><br>${$item.find('.abstract').html()}`,
                 pubDate: new Date($item.find('.time > span').attr('title')).toUTCString(),
             };
-        })
-        .get();
+        });
 
     return {
         title: `商务印书馆-${title}`,

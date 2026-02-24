@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -27,8 +28,8 @@ export const route: Route = {
     handler,
     url: 'liuyan.people.com.cn/',
     description: `| 全部 | 待回复 | 办理中 | 已办理 |
-  | ---- | ------ | ------ | ------ |
-  | 1    | 2      | 3      | 4      |`,
+| ---- | ------ | ------ | ------ |
+| 1    | 2      | 3      | 4      |`,
 };
 
 async function handler(ctx) {

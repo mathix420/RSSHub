@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const BASE = 'https://www.timednews.com/topic';
@@ -71,9 +72,9 @@ export const route: Route = {
     handler,
     description: `子分类
 
-  | 全部 | 时政           | 财经    | 科技       | 社会   | 体娱   | 国际          | 美国 | 中国 | 欧洲   | 评论     |
-  | ---- | -------------- | ------- | ---------- | ------ | ------ | ------------- | ---- | ---- | ------ | -------- |
-  | all  | currentAffairs | finance | technology | social | sports | international | usa  | cn   | europe | comments |`,
+| 全部 | 时政           | 财经    | 科技       | 社会   | 体娱   | 国际          | 美国 | 中国 | 欧洲   | 评论     |
+| ---- | -------------- | ------- | ---------- | ------ | ------ | ------------- | ---- | ---- | ------ | -------- |
+| all  | currentAffairs | finance | technology | social | sports | international | usa  | cn   | europe | comments |`,
 };
 
 async function handler(ctx) {
@@ -87,14 +88,14 @@ async function handler(ctx) {
     const $ = load(res.data);
 
     const list = $('#content li')
-        .map((i, e) => {
+        .toArray()
+        .map((e) => {
             const c = load(e);
             return {
                 title: c('a').text().trim(),
                 link: c('a').attr('href'),
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

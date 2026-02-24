@@ -1,6 +1,8 @@
-import { Route } from '@/types';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import ofetch from '@/utils/ofetch';
+
 import { baseUrl, parseItem } from './utils';
 
 export const route: Route = {
@@ -18,8 +20,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| 相機及鏡頭 | 手機平板 | 試車報告 |
-  | ---------- | -------- | -------- |
-  | cameras    | phones   | cars     |`,
+| ---------- | -------- | -------- |
+| cameras    | phones   | cars     |`,
 };
 
 async function handler(ctx) {

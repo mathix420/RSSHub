@@ -1,8 +1,8 @@
-import { Route } from '@/types';
-import ofetch from '@/utils/ofetch';
-import { AuthorResponse, LiteratureResponse } from './types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
 
+import type { AuthorResponse, LiteratureResponse } from './types';
 import { baseUrl, parseLiterature } from './utils';
 
 export const route: Route = {
@@ -19,7 +19,15 @@ export const route: Route = {
     handler,
 };
 
-export const getAuthorById = (id: string) => cache.tryGet(`inspirehep:author:${id}`, () => ofetch<AuthorResponse>(`${baseUrl}/api/authors/${id}`));
+export const getAuthorById = (id: string) =>
+    cache.tryGet(`inspirehep:author:${id}`, () =>
+        ofetch<AuthorResponse>(`${baseUrl}/api/authors/${id}`, {
+            headers: {
+                accept: 'application/vnd+inspire.record.ui+json',
+            },
+            parseResponse: JSON.parse,
+        })
+    );
 
 async function handler(ctx) {
     const id = ctx.req.param('id');

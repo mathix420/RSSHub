@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/lm/:id?',
@@ -28,16 +29,16 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 焦点访谈 | 等着我 | 今日说法 | 开讲啦 |
-  | -------- | ------ | -------- | ------ |
-  | jdft     | dzw    | jrsf     | kjl    |
+| -------- | ------ | -------- | ------ |
+| jdft     | dzw    | jrsf     | kjl    |
 
-  | 正大综艺 | 经济半小时 | 第一动画乐园 |
-  | -------- | ---------- | ------------ |
-  | zdzy     | jjbxs      | dydhly       |
+| 正大综艺 | 经济半小时 | 第一动画乐园 |
+| -------- | ---------- | ------------ |
+| zdzy     | jjbxs      | dydhly       |
 
-  :::tip
+::: tip
   更多栏目请看 [这里](https://tv.cctv.com/lm)
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

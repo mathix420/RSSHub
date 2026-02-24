@@ -1,7 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
+
 import utils from './utils';
 
 export const route: Route = {
@@ -28,9 +30,9 @@ export const route: Route = {
     handler,
     description: `内容类型
 
-  | 文章    | 动态  |
-  | ------- | ----- |
-  | article | state |
+| 文章    | 动态  |
+| ------- | ----- |
+| article | state |
 
   参数
 
@@ -69,7 +71,7 @@ async function handler(ctx) {
     });
     const $ = load(response.data.data.list);
 
-    let item = [];
+    let item: DataItem[];
     const needFullText = option === 'fulltext';
     switch (type) {
         case 'article':
@@ -78,6 +80,8 @@ async function handler(ctx) {
         case 'state':
             item = utils.statusListParser($);
             break;
+        default:
+            throw new Error(`Unknown type: ${type}`);
     }
 
     const typeToLabel = {

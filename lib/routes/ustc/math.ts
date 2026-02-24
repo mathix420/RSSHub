@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 const map = new Map([
     ['xyxw', { title: '中国科学技术大学数学科学学院 - 学院新闻', id: 'xyxw' }],
@@ -39,8 +40,8 @@ export const route: Route = {
     handler,
     url: 'math.ustc.edu.cn/',
     description: `| 学院新闻 | 通知公告 | 学术交流 | 学术报告 |
-  | -------- | -------- | -------- | -------- |
-  | xyxw     | tzgg     | xsjl     | xsbg     |`,
+| -------- | -------- | -------- | -------- |
+| xyxw     | tzgg     | xsjl     | xsbg     |`,
 };
 
 async function handler(ctx) {
@@ -73,7 +74,7 @@ async function handler(ctx) {
     items = await Promise.all(
         items.map((item) =>
             cache.tryGet(item.link, async () => {
-                let desc = '';
+                let desc: string;
                 try {
                     const response = await got(item.link);
                     desc = load(response.data)('div.wp_articlecontent').html();

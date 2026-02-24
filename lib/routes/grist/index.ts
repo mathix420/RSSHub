@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import { getData, getList } from './utils';
 
 export const route: Route = {
@@ -8,8 +9,11 @@ export const route: Route = {
             source: ['grist.org/articles/'],
         },
     ],
-    name: 'Unknown',
+    name: 'Latest Articles',
     maintainers: ['Rjnishant530'],
+    categories: ['new-media'],
+    example: '/grist',
+    parameters: {},
     handler,
     url: 'grist.org/articles/',
 };

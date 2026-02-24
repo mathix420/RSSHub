@@ -1,13 +1,10 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+import timezone from '@/utils/timezone';
+
+import { renderDescription } from '../templates/description';
 import { parseArticle } from './utils';
 
 export const route: Route = {
@@ -26,9 +23,9 @@ export const route: Route = {
     name: '南方 +（按栏目 ID）',
     maintainers: ['TimWu007'],
     handler,
-    description: `:::tip
+    description: `::: tip
   若此处输入的是栏目 ID（而非南方号 ID），则该接口会返回与输入栏目相关联栏目的文章。例如，输入栏目 ID \`38\`（广州），则返回的结果还会包含 ID 为 \`3547\`（市长报道集）的文章。
-  :::
+:::
 
   1.  \`pc.nfapp.southcn.com\` 下的文章页面，可通过 url 查看，例：\`http://pc.nfapp.southcn.com/13707/7491109.html\` 的栏目 ID 为 \`13707\`。
   2.  \`static.nfapp.southcn.com\` 下的文章页面，可查看网页源代码，搜索 \`columnid\`。
@@ -55,7 +52,7 @@ async function handler(ctx) {
         .filter((i) => i.articleType === 0)
         .map((item) => ({
             title: '【' + item.columnName + '】' + item.title,
-            description: art(path.join(__dirname, '../templates/description.art'), {
+            description: renderDescription({
                 thumb: item.picMiddle,
                 description: item.summary === '详见内文' ? '' : item.summary,
             }),

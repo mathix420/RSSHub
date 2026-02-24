@@ -1,14 +1,12 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
+import { load } from 'cheerio';
+import { CookieJar } from 'tough-cookie';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import path from 'node:path';
-import { art } from '@/utils/render';
 
-import { CookieJar } from 'tough-cookie';
+import { renderDescription } from './templates/description';
+
 const cookieJar = new CookieJar();
 
 export const route: Route = {
@@ -36,7 +34,8 @@ async function handler(ctx) {
     const $ = load(response.data);
     const jrnlName = $('.anchor.js-title-link').text();
     const list = $('.js-article')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             const title = $(item).find('.js-article-title').text();
             const authors = $(item).find('.js-article__item__authors').text();
             const link = $(item).find('.article-content-title').attr('href');
@@ -48,13 +47,9 @@ async function handler(ctx) {
                 authors,
                 issue,
             };
-        })
-        .get();
-
-    const renderDesc = (item) =>
-        art(path.join(__dirname, 'templates/description.art'), {
-            item,
         });
+
+    const renderDesc = (item) => renderDescription(item);
     const items = await Promise.all(
         list.map((item) =>
             cache.tryGet(item.link, async () => {

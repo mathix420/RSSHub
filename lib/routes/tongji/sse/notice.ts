@@ -1,14 +1,14 @@
-import { Route } from '@/types';
+import { load } from 'cheerio'; // html parser
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 // Warning: The author still knows nothing about javascript!
-
 // params:
 // type: notification type
-
 import got from '@/utils/got'; // get web content
-import { load } from 'cheerio'; // html parser
-import getArticle from './_article';
 import { parseDate } from '@/utils/parse-date';
+
+import getArticle from './_article';
 
 export const route: Route = {
     path: '/sse/:type?',
@@ -27,8 +27,8 @@ export const route: Route = {
     maintainers: ['sgqy'],
     handler,
     description: `| 本科生通知 | 研究生通知 | 教工通知 | 全体通知 | 学院通知 | 学院新闻 | 学院活动 |
-  | ---------- | ---------- | -------- | -------- | -------- | -------- | -------- |
-  | bkstz      | yjstz      | jgtz     | qttz     | xytz     | xyxw     | xyhd     |
+| ---------- | ---------- | -------- | -------- | -------- | -------- | -------- |
+| bkstz      | yjstz      | jgtz     | qttz     | xytz     | xyxw     | xyhd     |
 
   注意: \`qttz\` 与 \`xytz\` 在原网站等价.`,
 };

@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -26,9 +27,9 @@ export const route: Route = {
     maintainers: ['3401797899'],
     handler,
     url: 'jwgl.ouc.edu.cn/cas/login.action',
-    description: `:::warning
+    description: `::: warning
   由于选课通知仅允许校园网访问，需自行部署。
-  :::`,
+:::`,
 };
 
 async function handler() {

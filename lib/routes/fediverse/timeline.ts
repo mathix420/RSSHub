@@ -1,14 +1,15 @@
-import InvalidParameterError from '@/errors/types/invalid-parameter';
-import { Route, ViewType } from '@/types';
-
-import { parseDate } from '@/utils/parse-date';
-import ofetch from '@/utils/ofetch';
 import { config } from '@/config';
 import ConfigNotFoundError from '@/errors/types/config-not-found';
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
+import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
+import parser from '@/utils/rss-parser';
 
 export const route: Route = {
     path: '/timeline/:account',
-    categories: ['social-media', 'popular'],
+    categories: ['social-media'],
     view: ViewType.SocialMedia,
     example: '/fediverse/timeline/Mastodon@mastodon.social',
     parameters: { account: 'username@domain' },
@@ -21,7 +22,7 @@ export const route: Route = {
         supportScihub: false,
     },
     name: 'Timeline',
-    maintainers: ['DIYgod'],
+    maintainers: ['DIYgod', 'pseudoyu'],
     handler,
 };
 
@@ -51,18 +52,35 @@ async function handler(ctx) {
             Accept: 'application/jrd+json',
         },
     });
-
     const jsonLink = acc.links.find((link) => link.rel === 'self' && activityPubTypes.has(link.type))?.href;
     const link = acc.links.find((link) => link.rel === 'http://webfinger.net/rel/profile-page')?.href;
+    const officialFeed = await parser.parseURL(`${link}.rss`);
+
+    if (officialFeed) {
+        return {
+            title: `${officialFeed.title} (Fediverse@${account})`,
+            description: officialFeed.description,
+            image: officialFeed.image?.url,
+            link: officialFeed.link,
+            item: officialFeed.items.map((item) => ({
+                title: item.title,
+                description: item.content,
+                link: item.link,
+                pubDate: item.pubDate ? parseDate(item.pubDate) : null,
+                guid: item.guid,
+            })),
+        };
+    }
 
     const self = await ofetch(jsonLink, requestOptions);
 
+    // If RSS feed is not available, fallback to original method
     const outbox = await ofetch(self.outbox, requestOptions);
     const firstOutbox = await ofetch(outbox.first, requestOptions);
 
     const items = firstOutbox.orderedItems;
 
-    const itemResolvers = [] as Promise<any>[];
+    const itemResolvers = [] as Array<Promise<any>>;
 
     for (const item of items) {
         if (!['Announce', 'Create', 'Update'].includes(item.type)) {

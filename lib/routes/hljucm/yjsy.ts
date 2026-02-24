@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/yjsy/:category?',
@@ -22,8 +23,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 新闻动态 | 通知公告 |
-  | -------- | -------- |
-  | xwdt     | tzgg     |`,
+| -------- | -------- |
+| xwdt     | tzgg     |`,
 };
 
 async function handler(ctx) {

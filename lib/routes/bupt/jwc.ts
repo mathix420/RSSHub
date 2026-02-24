@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import type { Context } from 'hono';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
-import type { Context } from 'hono';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/jwc/:type',
@@ -68,7 +69,8 @@ async function handler(ctx: Context) {
     const $ = load(response.data);
 
     const list = $('.txt-elise')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             const $item = $(item);
             const $link = $item.find('a');
             // Skip elements without links or with empty href
@@ -80,7 +82,6 @@ async function handler(ctx: Context) {
                 link: rootUrl + '/' + $link.attr('href'),
             };
         })
-        .get()
         .filter(Boolean);
 
     const items = await Promise.all(

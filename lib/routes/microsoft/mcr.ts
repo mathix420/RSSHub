@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
 
 export const route: Route = {
@@ -28,11 +28,11 @@ async function handler(ctx) {
     const product = ctx.req.path.replace('/microsoft/mcr/product/', '');
     const { data: details } = await got({
         method: 'get',
-        url: `https://mcr.microsoft.com/api/v1/catalog/${product}/details`,
+        url: `https://mcr.microsoft.com/api/v1/catalog/${product}/details?reg=mar`,
     });
     const { data: tags } = await got({
         method: 'get',
-        url: `https://mcr.microsoft.com/api/v1/catalog/${product}/tags`,
+        url: `https://mcr.microsoft.com/api/v1/catalog/${product}/tags?reg=mar`,
     });
 
     return {

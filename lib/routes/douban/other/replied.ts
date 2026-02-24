@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 
 export const route: Route = {
     path: '/replied/:uid',
@@ -30,7 +31,8 @@ async function handler(ctx) {
 
     const $ = load(response.data);
     const list = $('div.recent-replied-mod ul.comment-list li')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const p = item.find('p');
             const nid = p
@@ -44,8 +46,7 @@ async function handler(ctx) {
                 title: `${item.find('a.lnk-people').text()} - ${title}`,
                 link: `https://www.douban.com/note/${nid}`,
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

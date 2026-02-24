@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const baseUrl = 'https://gs.dhu.edu.cn';
@@ -28,8 +29,8 @@ export const route: Route = {
     maintainers: ['fox2049'],
     handler,
     description: `| 新闻动态 | 通知公告 | 选课考试 |
-  | -------- | -------- | -------- |
-  | trend    | notice   | class    |`,
+| -------- | -------- | -------- |
+| trend    | notice   | class    |`,
 };
 
 async function handler(ctx) {

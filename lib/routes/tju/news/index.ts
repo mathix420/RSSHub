@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -35,8 +36,8 @@ export const route: Route = {
     maintainers: ['AlanZeng423', 'SuperPung'],
     handler,
     description: `| Focus on TJU | General News | Internal News | Media Report | Pictures of TJU |
-  | :----------: | :----------: | :-----------: | :----------: | :-------------: |
-  |     focus    |    general   |    internal   |     media    |     picture     |`,
+| :----------: | :----------: | :-----------: | :----------: | :-------------: |
+|     focus    |    general   |    internal   |     media    |     picture     |`,
 };
 
 async function handler(ctx) {
@@ -97,7 +98,7 @@ async function handler(ctx) {
         const $ = load(response.data);
 
         let list;
-        list = type === 'picture' ? $('.picList > li').get() : $('.indexList > li').get();
+        list = type === 'picture' ? $('.picList > li').toArray() : $('.indexList > li').toArray();
 
         list = list.map((item) => {
             const href = $('h4 > a', item).attr('href');
@@ -115,10 +116,9 @@ async function handler(ctx) {
                     case 'tju-news':
                     case 'in-site':
                         return cache.tryGet(item.link, async () => {
-                            let detailResponse = null;
                             try {
                                 delete item.type;
-                                detailResponse = await got(item.link);
+                                const detailResponse = await got(item.link);
                                 const content = load(detailResponse.data);
                                 item.pubDate = timezone(
                                     parseDate(

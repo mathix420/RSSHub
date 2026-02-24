@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
-import { baseUrl as rootUrl, parseList, parseItems } from './utils';
+
+import { baseUrl as rootUrl, parseItems, parseList } from './utils';
 
 export const route: Route = {
     path: '/today/:edition?/:tab?',
@@ -18,9 +19,9 @@ export const route: Route = {
     url: 'today.line.me/',
     description: `Edition
 
-  | Taiwan | Thailand | Hong Kong |
-  | ------ | -------- | --------- |
-  | tw     | th       | hk        |`,
+| Taiwan | Thailand | Hong Kong |
+| ------ | -------- | --------- |
+| tw     | th       | hk        |`,
 };
 
 async function handler(ctx) {

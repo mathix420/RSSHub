@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -26,8 +27,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| 有色金属类 | 黑色金属类 | 能源化工类 | 贵金属类 | 农产品类 | 金融类 | 指数类 |
-  | ---------- | ---------- | ---------- | -------- | -------- | ------ | ------ |
-  | ysjsl      | hsjsl      | nyhgl      | gjsl     | ncpl     | jrl    | zsl    |`,
+| ---------- | ---------- | ---------- | -------- | -------- | ------ | ------ |
+| ysjsl      | hsjsl      | nyhgl      | gjsl     | ncpl     | jrl    | zsl    |`,
 };
 
 async function handler(ctx) {

@@ -1,9 +1,11 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import utils from './utils';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
+import utils from './utils';
 
 const channelLinkMap = {
     news: 'https://www.cde.org.cn/main/news/listpage/545cf855a50574699b46b26bcb165f32',
@@ -94,19 +96,19 @@ export const route: Route = {
     handler,
     description: `-   频道
 
-  | 新闻中心 | 政策法规 |
-  | :------: | :------: |
-  |   news   |  policy  |
+| 新闻中心 | 政策法规 |
+| :------: | :------: |
+|   news   |  policy  |
 
   -   类别
 
-  | 新闻中心 | 政务新闻 | 要闻导读 | 图片新闻 | 工作动态 |
-  | :------: | :------: | :------: | :------: | :------: |
-  |          |   zwxw   |   ywdd   |   tpxw   |   gzdt   |
+| 新闻中心 | 政务新闻 | 要闻导读 | 图片新闻 | 工作动态 |
+| :------: | :------: | :------: | :------: | :------: |
+|          |   zwxw   |   ywdd   |   tpxw   |   gzdt   |
 
-  | 政策法规 | 法律法规 | 中心规章 |
-  | :------: | :------: | :------: |
-  |          |   flfg   |   zxgz   |`,
+| 政策法规 | 法律法规 | 中心规章 |
+| :------: | :------: | :------: |
+|          |   flfg   |   zxgz   |`,
 };
 
 async function handler(ctx) {

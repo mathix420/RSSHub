@@ -1,9 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import MarkdownIt from 'markdown-it';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import MarkdownIt from 'markdown-it';
+
 const md = MarkdownIt({
     html: true,
     breaks: true,
@@ -42,17 +44,17 @@ async function handler() {
     const $ = load(response);
 
     const list = $('a.list-group-item')
-        .filter((i, e) => $(e).find('h4.media-heading i').length === 0)
-        .map(function () {
+        .toArray()
+        .filter((e) => $(e).find('h4.media-heading i').length === 0)
+        .map((item) => {
             const info = {
-                title: $(this).find('h4.media-heading').text().trim(),
-                author: $(this).find('.text-500').text(),
-                link: new URL($(this).attr('href'), host).href,
-                pubDate: $(this).find('p.pull-right.media-date strong').text().trim(),
+                title: $(item).find('h4.media-heading').text().trim(),
+                author: $(item).find('.text-500').text(),
+                link: new URL($(item).attr('href'), host).href,
+                pubDate: $(item).find('p.pull-right.media-date strong').text().trim(),
             };
             return info;
-        })
-        .get();
+        });
 
     const out = await Promise.all(
         list.map((info) =>

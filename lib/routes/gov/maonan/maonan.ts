@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -24,13 +25,13 @@ export const route: Route = {
     maintainers: ['ShuiHuo'],
     handler,
     description: `| 政务公开 | 政务新闻 | 茂南动态 | 重大会议 | 公告公示 | 招录信息 | 政策解读 |
-  | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
-  |   zwgk   |   zwxw   |   mndt   |   zdhy   |   tzgg   |   zlxx   |   zcjd   |`,
+| :------: | :------: | :------: | :------: | :------: | :------: | :------: |
+|   zwgk   |   zwxw   |   mndt   |   zdhy   |   tzgg   |   zlxx   |   zcjd   |`,
 };
 
 async function handler(ctx) {
-    let id = '';
-    let name = '';
+    let id: string;
+    let name: string;
 
     switch (ctx.req.param('category')) {
         case 'zwgk':
@@ -61,6 +62,8 @@ async function handler(ctx) {
             id = 'zwgk/zcjd';
             name = '政策解读';
             break;
+        default:
+            throw new Error(`Unknown category: ${ctx.req.param('category')}`);
     }
 
     const res = await got(`${host}/${id}/`);
@@ -110,6 +113,8 @@ async function handler(ctx) {
                                     author: content('.author').text().trim() === '本网' ? '茂名市茂南区人民政府网' : content('.author').text().trim(),
                                 };
                         }
+                    default:
+                        throw new Error(`Unknown host: ${url.host}`);
                 }
             });
         })

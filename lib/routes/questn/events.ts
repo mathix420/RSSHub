@@ -1,6 +1,6 @@
-import { Route } from '@/types';
-import { parseDate } from '@/utils/parse-date';
+import type { Route } from '@/types';
 import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
 
 import { parseFilterStr } from './util';
 
@@ -14,7 +14,7 @@ export const route: Route = {
         filter: 'Filter string',
     },
     description: `
-:::tip
+::: tip
 
 Filter parameters:
 - category: 100: trending, 200: newest, 300: top

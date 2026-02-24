@@ -1,9 +1,7 @@
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
 import got from '@/utils/got';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderMedia } from './templates/desc';
+
 const baseUrl = 'https://meteor.today';
 
 const getBoards = (tryGet) =>
@@ -37,7 +35,7 @@ const renderDesc = (desc) => {
     if (matchYouTube) {
         desc = desc.replaceAll(
             youTube,
-            art(path.join(__dirname, 'templates/desc.art'), {
+            renderMedia({
                 youTube: '$1',
             })
         );
@@ -46,7 +44,7 @@ const renderDesc = (desc) => {
         for (const img of matchImgur) {
             desc = desc.replace(
                 img,
-                art(path.join(__dirname, 'templates/desc.art'), {
+                renderMedia({
                     img,
                 })
             );
@@ -56,7 +54,7 @@ const renderDesc = (desc) => {
         for (const video of matchVideo) {
             desc = desc.replace(
                 video,
-                art(path.join(__dirname, 'templates/desc.art'), {
+                renderMedia({
                     video,
                 })
             );
@@ -66,7 +64,7 @@ const renderDesc = (desc) => {
         for (const sticker of matchSticker) {
             desc = desc.replace(
                 sticker,
-                art(path.join(__dirname, 'templates/desc.art'), {
+                renderMedia({
                     img: sticker,
                 })
             );
@@ -76,7 +74,7 @@ const renderDesc = (desc) => {
         for (const emoji of matchEmoji) {
             desc = desc.replace(
                 emoji,
-                art(path.join(__dirname, 'templates/desc.art'), {
+                renderMedia({
                     img: emoji,
                 })
             );

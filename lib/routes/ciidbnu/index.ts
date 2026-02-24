@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -23,8 +24,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 社会动态 | 院内新闻 | 学术观点 | 文献书籍 | 工作论文 | 专题讨论 |
-  | -------- | -------- | -------- | -------- | -------- | -------- |
-  | 1        | 5        | 3        | 4        | 6        | 8        |`,
+| -------- | -------- | -------- | -------- | -------- | -------- |
+| 1        | 5        | 3        | 4        | 6        | 8        |`,
 };
 
 async function handler(ctx) {
@@ -41,14 +42,14 @@ async function handler(ctx) {
 
     const list = $('#newsrightlist a')
         .slice(0, 10)
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             return {
                 title: item.text(),
                 link: `${rootUrl}${item.attr('href').replace('..', '')}`,
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

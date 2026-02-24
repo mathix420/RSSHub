@@ -1,8 +1,9 @@
-import { DataItem, Route } from '@/types';
 import { load } from 'cheerio';
-import { parseDate } from '@/utils/parse-date';
-import ofetch from '@/utils/ofetch';
+
+import type { DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
     path: '/fd/:type',
@@ -21,7 +22,7 @@ export const route: Route = {
     maintainers: ['hualiong'],
     description: `\`:type\` 类型可选如下
 
-  | 要闻 | 政策 | 数据 | 市场 | 企业 | 招标 | 技术 | 报道 |
+| 要闻 | 政策 | 数据 | 市场 | 企业 | 招标 | 技术 | 报道 |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | yw   | zc   | sj   | sc   | mq   | zb   | js   | bd   |`,
     handler: async (ctx) => {

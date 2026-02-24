@@ -1,7 +1,8 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import { getList, parseList, parseItem } from './utils';
 import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+
+import { getList, parseItem, parseList } from './utils';
 
 export const route: Route = {
     path: '/news/list/:region/:listId',
@@ -18,7 +19,10 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['hk.news.yahoo.com/', 'tw.news.yahoo.com/'],
+            source: ['hk.news.yahoo.com/'],
+        },
+        {
+            source: ['tw.news.yahoo.com/'],
         },
     ],
     name: '合作媒體',
@@ -55,7 +59,7 @@ async function handler(ctx) {
 
     const author = items[0].author;
     const atIndex = author.indexOf('@'); // fing '@'
-    const source = atIndex === -1 ? author : author.substring(atIndex + 1).trim();
+    const source = atIndex === -1 ? author : author.slice(atIndex + 1).trim();
     // console.log(source);
 
     return {

@@ -1,9 +1,12 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import querystring from 'querystring';
+import querystring from 'node:querystring';
+
 import { load } from 'cheerio';
-import got from '@/utils/got';
+
 import { config } from '@/config';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
+
 export const route: Route = {
     path: '/people/:userid/wish/:routeParams?',
     categories: ['social-media'],
@@ -22,9 +25,9 @@ export const route: Route = {
     handler,
     description: `对于豆瓣用户想看的内容，在 \`routeParams\` 参数中以 query string 格式设置如下选项可以控制输出的样式
 
-  | 键         | 含义       | 接受的值 | 默认值 |
-  | ---------- | ---------- | -------- | ------ |
-  | pagesCount | 查询页面数 |          | 1      |`,
+| 键         | 含义       | 接受的值 | 默认值 |
+| ---------- | ---------- | -------- | ------ |
+| pagesCount | 查询页面数 |          | 1      |`,
 };
 
 async function handler(ctx) {
@@ -64,7 +67,7 @@ async function handler(ctx) {
 
                     if (list) {
                         return Promise.all(
-                            list.get().map((item) => {
+                            list.toArray().map((item) => {
                                 item = $(item);
                                 const itemPicUrl = item.find('.pic a img').attr('src');
                                 const info = item.find('.info');

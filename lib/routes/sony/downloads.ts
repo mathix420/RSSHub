@@ -1,6 +1,8 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
+
 const host = 'https://www.sony.com';
 export const route: Route = {
     path: '/downloads/:productType/:productId',
@@ -23,9 +25,9 @@ export const route: Route = {
     name: 'Software Downloads',
     maintainers: ['EthanWng97'],
     handler,
-    description: `:::tip
+    description: `::: tip
   Open \`https://www.sony.com/electronics/support\` and search for the corresponding product, such as \`Sony A7M4\`, the website corresponding to which is \`https://www.sony.com/electronics/support/e-mount-body-ilce-7-series/ilce-7m4/downloads\`, where \`productType\` is \`e-mount-body-ilce-7-series\` and \`productId\` is \`ilce-7m4\`.
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {
@@ -48,9 +50,7 @@ async function handler(ctx) {
         results = JSON.parse(match[1]).searchResults.results;
     }
     const list = results.map((item) => {
-        const data = {};
-        data.title = item.title;
-        data.pubDate = item.publicationDate;
+        const data = { title: item.title, pubDate: item.publicationDate };
         const url = item.url;
         if (url.startsWith('http')) {
             data.url = url;

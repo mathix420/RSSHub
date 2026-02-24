@@ -1,12 +1,17 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
+
 import { parseArticle } from './utils';
 
 export const route: Route = {
     path: '/sports/:type?',
-    name: 'Unknown',
+    name: '新浪体育',
+    categories: ['new-media'],
+    example: '/sports',
+    parameters: { type: '类别' },
     maintainers: ['nczitzk'],
     handler,
 };

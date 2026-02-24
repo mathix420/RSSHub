@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 
 const host = 'https://ipsw.me/';
 
@@ -49,26 +50,25 @@ async function handler(ctx) {
         },
     });
     const $ = load(response.data);
-    let list = {};
-    list = pname.includes(',')
+    const list = pname.includes(',')
         ? $('.firmware')
-              .map(function () {
+              .toArray()
+              .map((item) => {
                   const info = {
-                      title: $(this).find('td').eq(1).text(),
-                      link: replaceurl($(this).attr('onclick')),
+                      title: $(item).find('td').eq(1).text(),
+                      link: replaceurl($(item).attr('onclick')),
                   };
                   return info;
               })
-              .get()
         : $('.products a')
-              .map(function () {
+              .toArray()
+              .map((item) => {
                   const info = {
-                      title: $(this).find('img').attr('alt'),
-                      link: $(this).attr('href'),
+                      title: $(item).find('img').attr('alt'),
+                      link: $(item).attr('href'),
                   };
                   return info;
-              })
-              .get();
+              });
 
     const out = await Promise.all(
         list.map((info) => {

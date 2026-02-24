@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/:category?',
@@ -28,24 +29,24 @@ export const route: Route = {
     handler,
     description: `Free articles only.
 
-  | Category       | Parameter |
-  | -------------- | --------- |
-  | 新着・速報     | news      |
-  | 社会           | national  |
-  | 政治           | politics  |
-  | 経済           | economy   |
-  | スポーツ       | sports    |
-  | 国際           | world     |
-  | 地域           | local     |
-  | 科学・ＩＴ     | science   |
-  | エンタメ・文化 | culture   |
-  | ライフ         | life      |
-  | 医療・健康     | medical   |
-  | 教育・就活     | kyoiku    |
-  | 選挙・世論調査 | election  |
-  | 囲碁・将棋     | igoshougi |
-  | 社説           | editorial |
-  | 皇室           | koushitsu |`,
+| Category       | Parameter |
+| -------------- | --------- |
+| 新着・速報     | news      |
+| 社会           | national  |
+| 政治           | politics  |
+| 経済           | economy   |
+| スポーツ       | sports    |
+| 国際           | world     |
+| 地域           | local     |
+| 科学・ＩＴ     | science   |
+| エンタメ・文化 | culture   |
+| ライフ         | life      |
+| 医療・健康     | medical   |
+| 教育・就活     | kyoiku    |
+| 選挙・世論調査 | election  |
+| 囲碁・将棋     | igoshougi |
+| 社説           | editorial |
+| 皇室           | koushitsu |`,
 };
 
 async function handler(ctx) {

@@ -1,8 +1,10 @@
-import { Route } from '@/types';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { rootUrl, ProcessFeed } from './utils';
+import ofetch from '@/utils/ofetch';
+
+import { ProcessFeed, rootUrl } from './utils';
 
 export const route: Route = {
     path: '/contributors/:author',
@@ -26,14 +28,14 @@ async function handler(ctx) {
     const $ = load(response);
 
     const list = $('div.contect_box_05in > a')
-        .map(function () {
+        .toArray()
+        .map((element) => {
             const info = {
-                title: $(this).find('h3').text().trim(),
-                link: new URL($(this).attr('href'), rootUrl).href,
+                title: $(element).find('h3').text().trim(),
+                link: new URL($(element).attr('href'), rootUrl).href,
             };
             return info;
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((info) =>

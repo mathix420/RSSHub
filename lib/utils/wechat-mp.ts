@@ -25,11 +25,14 @@
  * For more details of these functions, please refer to the jsDoc in the source code.
  */
 
-import ofetch from '@/utils/ofetch';
-import { type Cheerio, type CheerioAPI, type Element, load } from 'cheerio';
-import { parseDate } from '@/utils/parse-date';
+import type { Cheerio, CheerioAPI } from 'cheerio';
+import { load } from 'cheerio';
+import type { Element } from 'domhandler';
+
 import cache from '@/utils/cache';
 import logger from '@/utils/logger';
+import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
 
 class WeChatMpError extends Error {
     constructor(message: string) {
@@ -127,7 +130,7 @@ const showTypeMap = {
 const showTypeMapReverse = Object.fromEntries(Object.entries(showTypeMap).map(([k, v]) => [v, k]));
 
 class ExtractMetadata {
-    private static genAssignmentRegExp = (varName: string, valuePattern: string, assignPattern: string) => RegExp(`\\b${varName}\\s*${assignPattern}\\s*(?<quote>["'])(?<value>${valuePattern})\\k<quote>`, 'mg');
+    private static genAssignmentRegExp = (varName: string, valuePattern: string, assignPattern: string) => new RegExp(String.raw`\b${varName}\s*${assignPattern}\s*(?<quote>["'])(?<value>${valuePattern})\k<quote>`, 'mg');
 
     private static genExtractFunc = (
         varName: string,
@@ -147,7 +150,7 @@ class ExtractMetadata {
         return (str: string) => {
             const values: string[] = [];
             for (const match of str.matchAll(regExp)) {
-                const value = <string>match.groups?.value;
+                const value = match.groups?.value as string;
                 if (!multiple) {
                     return value;
                 }
@@ -163,7 +166,7 @@ class ExtractMetadata {
     private static doExtract = (metadataToBeExtracted: Record<string, (str: string) => string | string[] | null | undefined>, scriptText: string) => {
         const metadataExtracted: Record<string, string | string[]> = {};
         for (const [key, extractFunc] of Object.entries(metadataToBeExtracted)) {
-            metadataExtracted[key] = <string>extractFunc(scriptText);
+            metadataExtracted[key] = extractFunc(scriptText) as string;
         }
         metadataExtracted._extractedFrom = scriptText;
         return metadataExtracted;
@@ -181,7 +184,7 @@ class ExtractMetadata {
             $,
             (script) => {
                 const scriptText = $(script).text();
-                const metadataExtracted = <Record<string, string>> this.doExtract(this.commonMetadataToBeExtracted, scriptText);
+                const metadataExtracted = this.doExtract(this.commonMetadataToBeExtracted, scriptText) as Record<string, string>;
                 const showType = showTypeMapReverse[metadataExtracted.showType];
                 const realShowType = showTypeMapReverse[metadataExtracted.realShowType];
                 metadataExtracted.sourceUrl = metadataExtracted.sourceUrl && fixUrl(metadataExtracted.sourceUrl);
@@ -216,7 +219,7 @@ class ExtractMetadata {
             $,
             (script) => {
                 const scriptText = $(script).text();
-                const metadataExtracted = <Record<string, string>> this.doExtract(this.audioMetadataToBeExtracted, scriptText);
+                const metadataExtracted = this.doExtract(this.audioMetadataToBeExtracted, scriptText) as Record<string, string>;
                 throw new LoopReturn(metadataExtracted);
             },
             {},
@@ -232,7 +235,7 @@ class ExtractMetadata {
             $,
             (script) => {
                 const scriptText = $(script).text();
-                const metadataExtracted = <Record<string, string[]>> this.doExtract(this.imgMetadataToBeExtracted, scriptText);
+                const metadataExtracted = this.doExtract(this.imgMetadataToBeExtracted, scriptText) as Record<string, string[]>;
                 if (Array.isArray(metadataExtracted.imgUrls)) {
                     metadataExtracted.imgUrls = metadataExtracted.imgUrls.map((url) => fixUrl(url));
                 }
@@ -350,10 +353,10 @@ const fixArticleContent = (html?: string | Cheerio<Element>, skipImg = false) =>
     // fix iframe: https://mp.weixin.qq.com/s/FnjcMXZ1xdS-d6n-pUUyyw
     $('iframe.video_iframe[data-src]').each((_, iframe) => {
         const $iframe = $(iframe);
-        const dataSrc = <string>$iframe.attr('data-src');
+        const dataSrc = $iframe.attr('data-src') as string;
         const srcUrlObj = new URL(dataSrc);
         if (srcUrlObj.host === 'v.qq.com' && srcUrlObj.searchParams.has('vid')) {
-            const newSrc = genVideoSrc(<string>srcUrlObj.searchParams.get('vid'));
+            const newSrc = genVideoSrc(srcUrlObj.searchParams.get('vid') as string);
             $iframe.attr('src', newSrc);
             $iframe.removeAttr('data-src');
             const width = $iframe.attr('data-w');
@@ -540,6 +543,7 @@ class PageParsers {
                 } else {
                     error('unknown page, probably due to WAF', pageTextShort, url);
                 }
+                /* v8 ignore next */
                 return {}; // just to make TypeScript happy, actually UNREACHABLE
             default:
                 warn('new showType, trying fallback method', `showType=${commonMetadata.showType}`, url);
@@ -572,7 +576,7 @@ const redirectHelper = async (url: string, maxRedirects: number = 5) => {
         } else if (maxRedirects <= 0) {
             error('too many redirects', url);
         }
-        return await redirectHelper(<string>raw.headers.get('location'), maxRedirects);
+        return await redirectHelper(raw.headers.get('location') as string, maxRedirects);
     }
     return raw;
 };
@@ -623,23 +627,25 @@ const fetchArticle = (url: string, bypassHostCheck: boolean = false) => {
  * @return {Promise<object>} - The incoming `item` object, with the article and its metadata filled in.
  */
 const finishArticleItem = async (item, setMpNameAsAuthor = false, skipLink = false) => {
-    const fetchedItem = await fetchArticle(item.link);
-    for (const key in fetchedItem) {
-        switch (key) {
-            case 'author':
-                item.author = setMpNameAsAuthor
-                    ? fetchedItem.mpName || item.author // the Official Account itself. if your route return articles from different accounts, you may want to use this
-                    : fetchedItem.author || item.author; // the real author of the article. if your route return articles from a certain account, use this
-                break;
-            case 'link':
-                item.link = skipLink ? item.link : fetchedItem.link || item.link;
-                break;
-            default:
-                item[key] = item[key] || fetchedItem[key];
+    if (item.link) {
+        const fetchedItem = await fetchArticle(item.link);
+        for (const key in fetchedItem) {
+            switch (key) {
+                case 'author':
+                    item.author = setMpNameAsAuthor
+                        ? fetchedItem.mpName || item.author // the Official Account itself. if your route return articles from different accounts, you may want to use this
+                        : fetchedItem.author || item.author; // the real author of the article. if your route return articles from a certain account, use this
+                    break;
+                case 'link':
+                    item.link = skipLink ? item.link : fetchedItem.link || item.link;
+                    break;
+                default:
+                    item[key] = item[key] || fetchedItem[key];
+            }
         }
     }
     return item;
 };
 
 const exportedForTestingOnly = { toggleWerror, ExtractMetadata, showTypeMapReverse };
-export { exportedForTestingOnly, WeChatMpError, fixArticleContent, fetchArticle, finishArticleItem, normalizeUrl };
+export { exportedForTestingOnly, fetchArticle, finishArticleItem, fixArticleContent, normalizeUrl, WeChatMpError };

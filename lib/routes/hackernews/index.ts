@@ -1,12 +1,14 @@
-import { Route, ViewType } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
     path: '/:section?/:type?/:user?',
-    categories: ['programming', 'popular'],
+    categories: ['programming'],
     view: ViewType.Articles,
     example: '/hackernews/threads/comments_list/dang',
     parameters: {
@@ -59,32 +61,34 @@ async function handler(ctx) {
 
     const list = $('.athing')
         .slice(0, ctx.req.query('limit') ? Number.parseInt(ctx.req.query('limit')) : 30)
-        .map((_, thing) => {
+        .toArray()
+        .map((thing) => {
             thing = $(thing);
 
-            const item = {};
+            const item = {
+                guid: thing.attr('id'),
+                title: thing.find('.titleline').children('a').text(),
+                category: thing.find('.sitestr').text(),
+                author: thing.next().find('.hnuser').text(),
+                pubDate: parseDate(thing.find('.age').attr('title') ?? thing.next().find('.age').attr('title')),
 
-            item.guid = thing.attr('id');
-            item.title = thing.find('.titleline').children('a').text();
-            item.category = thing.find('.sitestr').text();
-            item.author = thing.next().find('.hnuser').text();
-            item.pubDate = parseDate(thing.find('.age').attr('title') ?? thing.next().find('.age').attr('title'));
+                link: '',
+                origin: thing.find('.titleline').children('a').attr('href'),
+                onStory: thing.find('.onstory').text().slice(2),
+
+                comments: thing.next().find('a').last().text().split(' comment')[0],
+                upvotes: thing.next().find('.score').text().split(' point')[0],
+
+                currentComment: thing.find('.comment').text(),
+                description: '',
+            };
 
             item.link = `${rootUrl}/item?id=${item.guid}`;
-            item.origin = thing.find('.titleline').children('a').attr('href');
-            item.onStory = thing.find('.onstory').text().substring(2);
-
-            item.comments = thing.next().find('a').last().text().split(' comment')[0];
-            item.upvotes = thing.next().find('.score').text().split(' point')[0];
-
-            item.currentComment = thing.find('.comment').text();
             item.guid = type === 'sources' ? item.guid : `${item.guid}${item.comments === 'discuss' ? '' : `-${item.comments}`}`;
-
             item.description = `<a href="${item.link}">Comments on Hacker News</a> | <a href="${item.origin}">Source</a>`;
 
             return item;
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>
@@ -128,7 +132,7 @@ async function handler(ctx) {
                     item.description = item.currentComment;
                 }
 
-                if (isNaN(item.comments)) {
+                if (Number.isNaN(item.comments)) {
                     item.comments = 0;
                 }
 

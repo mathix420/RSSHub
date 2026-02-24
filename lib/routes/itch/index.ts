@@ -1,13 +1,11 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
-import { getSubPath } from '@/utils/common-utils';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import { getSubPath } from '@/utils/common-utils';
+import got from '@/utils/got';
+
+import { renderDescription } from './templates/description';
 
 export const route: Route = {
     path: '*',
@@ -49,7 +47,7 @@ async function handler(ctx) {
                 const content = load(detailResponse.data);
 
                 item.author = content('title').text().split('by ').pop();
-                item.description = art(path.join(__dirname, 'templates/description.art'), {
+                item.description = renderDescription({
                     images: content('.screenshot')
                         .toArray()
                         .map((i) => content(i).attr('src')),

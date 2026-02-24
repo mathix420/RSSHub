@@ -1,10 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import { isValidHost } from '@/utils/valid-host';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
+
 const cateList = new Set(['all', 'design-resources', 'learn-design', 'inside-eagle']);
 
 export const route: Route = {
@@ -61,12 +63,12 @@ async function handler(ctx) {
     const $ = load(response.data);
     const title = $('div.categories-list > div > div > div > ul > li.active').text();
     const list = $('div.post-item')
-        .map((_index, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('div.title').text(),
             link: new URL($(item).find('a').attr('href'), host).href,
             pubDate: parseDate($(item).find('div.metas > a > span').text().replace('・', '')),
-        }))
-        .get();
+        }));
 
     const items = await Promise.all(
         list.map((item) =>

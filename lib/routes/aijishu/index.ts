@@ -1,7 +1,9 @@
-import { Route } from '@/types';
-import utils from './utils';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
+
+import utils from './utils';
 
 export const route: Route = {
     path: '/:type/:name?',
@@ -20,10 +22,10 @@ export const route: Route = {
     maintainers: [],
     handler,
     description: `| type    | 说明 |
-  | ------- | ---- |
-  | channel | 频道 |
-  | blog    | 专栏 |
-  | u       | 用户 |`,
+| ------- | ---- |
+| channel | 频道 |
+| blog    | 专栏 |
+| u       | 用户 |`,
 };
 
 async function handler(ctx) {

@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 export const route: Route = {
     path: '/cloudflareyesv6',
     name: 'Unknown',
@@ -7,5 +8,5 @@ export const route: Route = {
 };
 
 function handler(ctx) {
-    ctx.redirect('/hostmonit/cloudflareyes/v6');
+    ctx.set('redirect', '/hostmonit/cloudflareyes/v6');
 }

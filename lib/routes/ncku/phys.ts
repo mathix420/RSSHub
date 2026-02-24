@@ -1,5 +1,7 @@
+import type { CheerioAPI } from 'cheerio';
+import { load } from 'cheerio';
+
 import type { Route } from '@/types';
-import { CheerioAPI, load } from 'cheerio';
 import ofetch from '@/utils/ofetch';
 
 const currentURL = (catagory: string) => `https://phys.ncku.edu.tw/news/${catagory === '_all' ? '' : catagory}`;
@@ -25,6 +27,7 @@ export const route: Route = {
     },
     name: 'Phys News',
     description: `| 分類 | catagory |
+| ---- | ---- |
 | 物理系 | 24 |
 | 獎助學金 | scholarship |
 | 招生與錄取報到 | admission |

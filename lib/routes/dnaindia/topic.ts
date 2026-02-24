@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import { handler } from './common';
 
 export const route: Route = {
@@ -22,7 +23,7 @@ export const route: Route = {
 | ------------ |
 | dna-verified |
 
-:::tip
+::: tip
 The URL of the form \`https://www.dnaindia.com/topic/dna-verified\` demonstrates the utilization of the subdomain \`topic\`.
 :::`,
 };

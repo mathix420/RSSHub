@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -39,7 +40,8 @@ async function handler() {
         language: 'zh-CN',
         item: await Promise.all(
             $list('.Newslist-li')
-                .map((_, el) => {
+                .toArray()
+                .map((el) => {
                     const $el = $list(el);
                     const $a = $el.find('.Newslist-title a');
                     const href = $a.attr('href');
@@ -59,7 +61,6 @@ async function handler() {
                         };
                     });
                 })
-                .get()
         ),
     };
 }

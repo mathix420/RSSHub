@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 const baseUrl = 'https://genetics.cas.cn';
@@ -22,7 +23,7 @@ async function handler(ctx) {
 
     let items;
 
-    if (path.substring(0, 3) === 'edu') {
+    if (path.slice(0, 3) === 'edu') {
         items = $('li.box-s.h16')
             .toArray()
             .map((item) => {
@@ -35,7 +36,7 @@ async function handler(ctx) {
                     pubDate: parseDate(date.text(), 'YYYY-MM-DD'),
                 };
             });
-    } else if (path.substring(0, 4) === 'dqyd') {
+    } else if (path.slice(0, 4) === 'dqyd') {
         items = $('div.list-tab ul li')
             .toArray()
             .map((item) => {

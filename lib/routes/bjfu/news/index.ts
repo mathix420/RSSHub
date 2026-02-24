@@ -1,9 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
+
 import util from './utils';
-import iconv from 'iconv-lite';
 
 export const route: Route = {
     path: '/news/:type',
@@ -27,8 +29,8 @@ export const route: Route = {
     maintainers: ['markmingjie'],
     handler,
     description: `| 绿色要闻 | 校园动态 | 教学科研 | 党建思政 | 一周排行 |
-  | -------- | -------- | -------- | -------- | -------- |
-  | lsyw     | xydt     | jxky     | djsz     | yzph     |`,
+| -------- | -------- | -------- | -------- | -------- |
+| lsyw     | xydt     | jxky     | djsz     | yzph     |`,
 };
 
 async function handler(ctx) {

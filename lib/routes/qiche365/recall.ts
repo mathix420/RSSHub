@@ -1,6 +1,7 @@
-import { Route, Data, DataItem } from '@/types';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Data, DataItem, Route } from '@/types';
+import ofetch from '@/utils/ofetch';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -12,8 +13,8 @@ export const route: Route = {
     example: '/qiche365/recall/1',
     parameters: { channel: '频道，见下表' },
     description: `| 国内召回新闻 | 国内召回公告 | 国外召回新闻 | 国外召回公告 |
-  | ------------ | ------------ | ------------ | ------------ |
-  | 1            | 2            | 3            | 4            |`,
+| ------------ | ------------ | ------------ | ------------ |
+| 1            | 2            | 3            | 4            |`,
     categories: ['government'],
     maintainers: ['huanfe1'],
     handler,
@@ -30,7 +31,7 @@ async function handler(ctx): Promise<Data> {
         },
     });
 
-    const $ = load(<string>html);
+    const $ = load(html as string);
     const items: DataItem[] = $('li')
         .toArray()
         .map((item) => {

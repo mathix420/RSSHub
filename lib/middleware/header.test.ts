@@ -1,9 +1,15 @@
-import { describe, expect, it, afterAll } from 'vitest';
+import { afterAll, afterEach, describe, expect, it } from 'vitest';
+
+import wait from '@/utils/wait';
 
 process.env.NODE_NAME = 'mock';
 process.env.ALLOW_ORIGIN = 'rsshub.mock';
 
 let etag;
+
+afterEach(async () => {
+    await wait(1000);
+});
 
 afterAll(() => {
     delete process.env.NODE_NAME;
@@ -23,6 +29,7 @@ describe('header', () => {
         expect(response.headers.get('rsshub-node')).toBe('mock');
         expect(response.headers.get('etag')).not.toBe(undefined);
         etag = response.headers.get('etag');
+        expect(response.headers.get('x-rsshub-route')).toBe('/test/:id/:params?');
     });
 
     it(`etag`, async () => {

@@ -1,7 +1,9 @@
-import type { Data, DataItem, Route } from '@/types';
-import type { Context } from 'hono';
 import { load } from 'cheerio';
-import { fetchThread, generateDescription, getDate, bbsOrigin } from '../utils';
+import type { Context } from 'hono';
+
+import type { Data, DataItem, Route } from '@/types';
+
+import { bbsOrigin, fetchThread, generateDescription, getDate } from '../utils';
 
 export const route: Route = {
     name: 'BBS - 讨论串',
@@ -30,7 +32,7 @@ export const route: Route = {
             },
         ],
     },
-    description: `:::warning
+    description: `::: warning
 百合会BBS访问部分讨论串需要用户登录认证，请参考配置说明
 :::`,
 };

@@ -1,7 +1,9 @@
-import { MiddlewareHandler } from 'hono';
 import etagCalculate from 'etag';
+import type { MiddlewareHandler } from 'hono';
+import { routePath } from 'hono/route';
+
 import { config } from '@/config';
-import { Data } from '@/types';
+import type { Data } from '@/types';
 
 const headers: Record<string, string> = {
     'Access-Control-Allow-Methods': 'GET',
@@ -24,15 +26,19 @@ const middleware: MiddlewareHandler = async (ctx, next) => {
     ctx.header('Access-Control-Allow-Origin', config.allowOrigin || new URL(ctx.req.url).host);
 
     await next();
+    const rPath = routePath(ctx);
+
+    if (rPath !== '/*') {
+        ctx.header('X-RSSHub-Route', rPath);
+    }
 
     const data: Data = ctx.get('data');
     if (!data || ctx.res.headers.get('ETag')) {
         return;
     }
 
-    const lastBuildDate = data.lastBuildDate;
-    delete data.lastBuildDate;
-    const etag = etagCalculate(JSON.stringify(data));
+    const { lastBuildDate, ...etagData } = data;
+    const etag = etagCalculate(JSON.stringify(etagData));
 
     ctx.header('ETag', etag);
 

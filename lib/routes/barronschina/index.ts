@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/:id?',
@@ -28,9 +29,9 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     url: 'barronschina.com.cn/',
-    description: `:::tip
+    description: `::: tip
   栏目 id 留空则返回快讯，在对应页地址栏 \`columnId=\` 后可以看到。
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

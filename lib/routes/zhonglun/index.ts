@@ -1,13 +1,11 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
+import { load } from 'cheerio';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderDescription } from './templates/description';
 
 export const handler = async (ctx) => {
     const { language = 'zh' } = ctx.req.param();
@@ -20,22 +18,21 @@ export const handler = async (ctx) => {
 
     const $ = load(response);
 
-    let items = $('div#dataList h3')
+    let items = $('div#dataList > dl > dd, div#dataList > ul > li')
         .slice(0, limit)
         .toArray()
         .map((item) => {
             item = $(item);
 
-            const title = item.text();
-            const description = art(path.join(__dirname, 'templates/description.art'), {
-                intro: item.next().text(),
+            const description = renderDescription({
+                intro: item.find('p').text(),
             });
 
             return {
-                title,
+                title: item.find('h3 > a').text(),
                 description,
-                pubDate: parseDate(item.find('span').first().text()),
-                link: item.find('a').prop('href'),
+                pubDate: parseDate(item.find('span').text()),
+                link: item.find('h3 > a').prop('href'),
                 language,
             };
         });
@@ -50,7 +47,7 @@ export const handler = async (ctx) => {
                 const title = $$('div.news_dtitle h2').text();
                 const description =
                     item.description +
-                    art(path.join(__dirname, 'templates/description.art'), {
+                    renderDescription({
                         description: $$('div.edit_con_original').html(),
                     });
                 const image = $$('img.raw-image').first().prop('src');
@@ -95,9 +92,9 @@ export const route: Route = {
     example: '/zhonglun/research/article/zh',
     parameters: { category: '语言，默认为 zh，即简体中文，可在对应分类页 URL 中找到' },
     description: `
-  | ENG | 简体中文 | 日本語 | 한국어 |
-  | --- | -------- | ------ | ------ |
-  | en  | zh       | ja     | kr     |
+| ENG | 简体中文 | 日本語 | 한국어 |
+| --- | -------- | ------ | ------ |
+| en  | zh       | ja     | kr     |
     `,
     categories: ['new-media'],
 

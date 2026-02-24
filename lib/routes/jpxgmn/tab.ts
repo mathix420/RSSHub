@@ -1,9 +1,11 @@
-import { Route } from '@/types';
-import { originUrl, getArticleDesc } from './utils';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
+import { getArticleDesc, getOriginUrl } from './utils';
 
 export const route: Route = {
     path: '/tab/:tab?',
@@ -12,19 +14,22 @@ export const route: Route = {
     parameters: { tab: '分类，默认为`top`，包括`top`、`new`、`hot`，以及[源网站](http://www.jpxgmn.com/)所包含的其他相对路径，比如`Xiuren`、`XiaoYu`等' },
     radar: [
         {
-            source: ['www.12356782.xyz/:tab'],
+            source: ['mei5.vip/:tab'],
             target: '/:tab',
         },
     ],
     name: '分类',
     maintainers: ['Urabartin'],
     handler,
+    features: {
+        nsfw: true,
+    },
 };
 
 async function handler(ctx) {
     const { tab = 'top' } = ctx.req.param();
     const isSpecial = ['new', 'top', 'hot'].includes(tab);
-    const tabUrl = `${originUrl}/${tab}` + (isSpecial ? '.html' : '/');
+    const tabUrl = `${await getOriginUrl()}/${tab}` + (isSpecial ? '.html' : '/');
     const response = await ofetch.raw(tabUrl);
     const baseUrl = new URL(response.url).origin;
     const $ = load(response._data);

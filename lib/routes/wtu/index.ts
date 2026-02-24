@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
@@ -20,8 +20,8 @@ export const route: Route = {
     maintainers: ['loyio'],
     handler,
     description: `| 公告类型 | 通知公告 | 教务信息 | 科研动态 |
-  | -------- | -------- | -------- | -------- |
-  | 参数     | 1        | 2        | 3        |`,
+| -------- | -------- | -------- | -------- |
+| 参数     | 1        | 2        | 3        |`,
 };
 
 async function handler(ctx) {

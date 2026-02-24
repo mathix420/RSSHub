@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import utils from './utils';
+import type { Route } from '@/types';
+
 import api from './api';
+import utils from './utils';
 
 export const route: Route = {
     path: '/home/:routeParams?',
@@ -8,14 +9,14 @@ export const route: Route = {
     example: '/twitter/home',
     features: {
         requireConfig: [
-            {
-                name: 'TWITTER_USERNAME',
-                description: 'Please see above for details.',
-            },
-            {
-                name: 'TWITTER_PASSWORD',
-                description: 'Please see above for details.',
-            },
+            // {
+            //     name: 'TWITTER_USERNAME',
+            //     description: 'Please see above for details.',
+            // },
+            // {
+            //     name: 'TWITTER_PASSWORD',
+            //     description: 'Please see above for details.',
+            // },
             {
                 name: 'TWITTER_AUTH_TOKEN',
                 description: 'Please see above for details.',
@@ -40,13 +41,16 @@ export const route: Route = {
 
 async function handler(ctx) {
     // For compatibility
-    const { count, include_rts } = utils.parseRouteParams(ctx.req.param('routeParams'));
+    const { count, include_rts, only_media } = utils.parseRouteParams(ctx.req.param('routeParams'));
     const params = count ? { count } : {};
 
     await api.init();
     let data = await api.getHomeTimeline('', params);
     if (!include_rts) {
         data = utils.excludeRetweet(data);
+    }
+    if (only_media) {
+        data = utils.keepOnlyMedia(data);
     }
 
     return {

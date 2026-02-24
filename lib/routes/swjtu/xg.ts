@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 const rootURL = 'http://xg.swjtu.edu.cn';
 const listURL = {
@@ -75,9 +76,9 @@ export const route: Route = {
     url: 'xg.swjtu.edu.cn/web/Home/PushNewsList',
     description: `栏目列表：
 
-  | 通知公告 | 扬华新闻 | 多彩学院 | 学工之家 |
-  | -------- | -------- | -------- | -------- |
-  | tzgg     | yhxw     | dcxy     | xgzj     |`,
+| 通知公告 | 扬华新闻 | 多彩学院 | 学工之家 |
+| -------- | -------- | -------- | -------- |
+| tzgg     | yhxw     | dcxy     | xgzj     |`,
 };
 
 async function handler(ctx) {

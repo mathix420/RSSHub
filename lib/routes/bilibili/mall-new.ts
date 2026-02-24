@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
 
 export const route: Route = {
@@ -18,8 +18,8 @@ export const route: Route = {
     maintainers: ['DIYgod'],
     handler,
     description: `| 全部 | 手办 | 魔力赏 | 周边 | 游戏 |
-  | ---- | ---- | ------ | ---- | ---- |
-  | 0    | 1    | 7      | 3    | 6    |`,
+| ---- | ---- | ------ | ---- | ---- |
+| 0    | 1    | 7      | 3    | 6    |`,
 };
 
 async function handler(ctx) {

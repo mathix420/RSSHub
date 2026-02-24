@@ -1,8 +1,11 @@
-import { Route } from '@/types';
+import zlib from 'node:zlib';
+
 import { load } from 'cheerio';
-import cache from './cache';
+
+import type { Route } from '@/types';
 import got from '@/utils/got';
-import zlib from 'zlib';
+
+import cache from './cache';
 
 const processFloatTime = (time) => {
     const totalSeconds = Number.parseInt(time);
@@ -62,7 +65,7 @@ async function handler(ctx) {
         danmakuList.push({ p: $(item).attr('p'), text: $(item).text() });
     });
 
-    danmakuList = danmakuList.reverse().slice(0, limit);
+    danmakuList = danmakuList.toReversed().slice(0, limit);
 
     return {
         title: `${videoName} 的 弹幕动态`,

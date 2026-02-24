@@ -1,9 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
+
 import { rootUrl } from './utils';
 
 const titles = {
@@ -40,8 +42,8 @@ export const route: Route = {
     handler,
     url: '0daily.com/',
     description: `| 最新 | 新品 | DeFi | NFT | 存储 | 波卡 | 行情 | 活动 |
-  | ---- | ---- | ---- | --- | ---- | ---- | ---- | ---- |
-  | 280  | 333  | 331  | 334 | 332  | 330  | 297  | 296  |`,
+| ---- | ---- | ---- | --- | ---- | ---- | ---- | ---- |
+| 280  | 333  | 331  | 334 | 332  | 330  | 297  | 296  |`,
 };
 
 async function handler(ctx) {

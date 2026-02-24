@@ -1,12 +1,13 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import RequestInProgressError from '@/errors/types/request-in-progress';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import { finishArticleItem } from '@/utils/wechat-mp';
 import wait from '@/utils/wait';
-import RequestInProgressError from '@/errors/types/request-in-progress';
+import { finishArticleItem } from '@/utils/wechat-mp';
 
 const parsePage = ($item, hyperlinkSelector, timeSelector) => {
     const hyperlink = $item.find(hyperlinkSelector);
@@ -60,11 +61,11 @@ async function handler(ctx) {
         categoryPage && categoryPage.length
             ? $(categoryPage)
                   .find('li')
-                  .map((_, item) => parsePage($(item), 'h2 a', '.fly-list-info span'))
-                  .get() // got a category page
+                  .toArray()
+                  .map((item) => parsePage($(item), 'h2 a', '.fly-list-info span')) // got a category page
             : $('ul.jie-row li')
-                  .map((_, item) => parsePage($(item), 'a.jie-title', '.layui-hide-xs'))
-                  .get(); // got an MP page
+                  .toArray()
+                  .map((item) => parsePage($(item), 'a.jie-title', '.layui-hide-xs')); // got an MP page
 
     items = items.slice(0, limit); // limit to avoid being anti-crawled
 

@@ -1,10 +1,12 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import utils from './utils';
-import { parseDate } from '@/utils/parse-date';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
 import puppeteer from '@/utils/puppeteer';
+
+import utils from './utils';
 
 export const route: Route = {
     path: '/news/:type/:lang?',
@@ -24,9 +26,9 @@ export const route: Route = {
     handler,
     description: `Category
 
-  | All | Detected Cases | Investigation Reports or Recommendations | Annual Reports | CCAC's Updates |
-  | --- | -------------- | ---------------------------------------- | -------------- | -------------- |
-  | all | case           | Persuasion                               | AnnualReport   | PCANews        |`,
+| All | Detected Cases | Investigation Reports or Recommendations | Annual Reports | CCAC's Updates |
+| --- | -------------- | ---------------------------------------- | -------------- | -------------- |
+| all | case           | Persuasion                               | AnnualReport   | PCANews        |`,
 };
 
 async function handler(ctx) {

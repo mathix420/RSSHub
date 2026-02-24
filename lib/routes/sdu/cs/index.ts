@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import { finishArticleItem } from '@/utils/wechat-mp';
 
@@ -59,7 +60,7 @@ export const route: Route = {
     name: '计算机科学与技术学院通知',
     maintainers: ['Ji4n1ng', 'wiketool'],
     handler,
-    description: `| 学院公告 | 学术报告 | 科技简讯 | 本科教育 | 研究生教育 | 
+    description: `| 学院公告 | 学术报告 | 科技简讯 | 本科教育 | 研究生教育 |
 | -------- | -------- | -------- | -------- | -------- |
 | announcement | academic | technology | undergraduate | postgraduate |`,
 };
@@ -73,7 +74,8 @@ async function handler(ctx) {
     const $ = load(response.data);
 
     let item = $('.dqlb ul li')
-        .map((_, e) => {
+        .toArray()
+        .map((e) => {
             e = $(e);
             const a = e.find('a');
             return {
@@ -81,8 +83,7 @@ async function handler(ctx) {
                 link: a.attr('href').startsWith('info/') ? host + a.attr('href') : a.attr('href'),
                 pubDate: parseDate(e.find('.fr').text().trim(), 'YYYY-MM-DD'),
             };
-        })
-        .get();
+        });
 
     item = await Promise.all(
         item.map((item) =>

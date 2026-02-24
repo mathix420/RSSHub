@@ -1,8 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 // 导入必要的模组
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const categoryMap = {
@@ -32,8 +33,8 @@ export const route: Route = {
     maintainers: ['Ermaotie'],
     handler,
     description: `| 公务信息 | 党建工作 | 人事工作 | 学生工作 | 科研实验室 | 本科生教务 | 研究生教务 |
-  | -------- | -------- | -------- | -------- | ---------- | ---------- | ---------- |
-  | gwxx     | djgz     | rsgz     | xsgz     | kysys      | bksjw      | yjsjw      |`,
+| -------- | -------- | -------- | -------- | ---------- | ---------- | ---------- |
+| gwxx     | djgz     | rsgz     | xsgz     | kysys      | bksjw      | yjsjw      |`,
 };
 
 async function handler(ctx) {

@@ -1,10 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import { CookieJar } from 'tough-cookie';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 import { card2Html } from './utils';
-import { CookieJar } from 'tough-cookie';
 
 const APP_DATA_REGEX = /window\.appData = JSON\.parse\(decodeURIComponent\("(.+?)"\)\);/;
 const baseUrl = 'https://www.yuque.com';
@@ -31,8 +33,8 @@ export const route: Route = {
     maintainers: ['aha2mao', 'ltaoo'],
     handler,
     description: `| Node.js 专栏                                             | 阮一峰每周分享                                                 | 语雀使用手册                                             |
-  | -------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- |
-  | [/yuque/egg/nodejs](https://rsshub.app/yuque/egg/nodejs) | [/yuque/ruanyf/weekly](https://rsshub.app/yuque/ruanyf/weekly) | [/yuque/yuque/help](https://rsshub.app/yuque/yuque/help) |`,
+| -------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- |
+| [/yuque/egg/nodejs](https://rsshub.app/yuque/egg/nodejs) | [/yuque/ruanyf/weekly](https://rsshub.app/yuque/ruanyf/weekly) | [/yuque/yuque/help](https://rsshub.app/yuque/yuque/help) |`,
 };
 
 async function handler(ctx) {

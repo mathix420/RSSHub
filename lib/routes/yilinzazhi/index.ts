@@ -1,11 +1,14 @@
-import { Data, DataItem, Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Data, DataItem, Route } from '@/types';
+import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 
 export const route: Route = {
     path: '/',
     categories: ['reading'],
+    view: ViewType.Articles,
     example: '/yilinzazhi',
     radar: [
         {
@@ -25,7 +28,8 @@ async function handler(): Promise<Data> {
     const $ = load(response.data);
     const contents: DataItem[] = $('section.content')
         .find('li')
-        .map((_, target) => {
+        .toArray()
+        .map((target) => {
             const li = $(target);
 
             const aTag = li.find('a');
@@ -37,8 +41,7 @@ async function handler(): Promise<Data> {
                 link,
                 description: '',
             };
-        })
-        .toArray();
+        });
 
     const items = (await Promise.all(
         contents.map((content) =>

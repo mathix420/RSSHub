@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 import { parseArticle } from '../../utils';
 
 export const route: Route = {
@@ -28,8 +29,8 @@ export const route: Route = {
     handler,
     url: 'finance.sina.com.cn/stock/usstock',
     description: `| 最新报道 | 中概股 | 国际财经 | 互联网 |
-  | -------- | ------ | -------- | ------ |
-  | 57045    | 57046  | 56409    | 40811  |`,
+| -------- | ------ | -------- | ------ |
+| 57045    | 57046  | 56409    | 40811  |`,
 };
 
 async function handler(ctx) {

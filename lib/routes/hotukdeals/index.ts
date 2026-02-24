@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 export const route: Route = {
     path: '/:type',
@@ -39,7 +40,8 @@ async function handler(ctx) {
         title: `hotukdeals ${type}`,
         link: `https://www.hotukdeals.com/${type}`,
         item: list
-            .map((index, item) => {
+            .toArray()
+            .map((item) => {
                 item = $(item);
                 return {
                     title: item.find('.cept-tt').text(),
@@ -47,7 +49,6 @@ async function handler(ctx) {
                     link: item.find('.cept-tt').attr('href'),
                 };
             })
-            .get()
-            .reverse(),
+            .toReversed(),
     };
 }

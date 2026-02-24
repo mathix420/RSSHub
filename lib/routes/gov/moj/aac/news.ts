@@ -1,9 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
+
 const baseUrl = 'https://www.aac.moj.gov.tw';
 
 export const route: Route = {
@@ -23,8 +25,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| 全部 | 其他 | 採購公告 | 新聞稿 | 肅貪 | 預防 | 綜合 | 防疫專區 |
-  | ---- | ---- | -------- | ------ | ---- | ---- | ---- | -------- |
-  |      | 02   | 01       | 06     | 05   | 04   | 03   | 99       |`,
+| ---- | ---- | -------- | ------ | ---- | ---- | ---- | -------- |
+|      | 02   | 01       | 06     | 05   | 04   | 03   | 99       |`,
 };
 
 async function handler(ctx) {

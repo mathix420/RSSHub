@@ -1,13 +1,15 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import querystring from 'querystring';
-import got from '@/utils/got';
+import querystring from 'node:querystring';
+
 import { config } from '@/config';
-import weiboUtils from './utils';
-import timezone from '@/utils/timezone';
+import ConfigNotFoundError from '@/errors/types/config-not-found';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import { fallback, queryToBoolean } from '@/utils/readable-social';
-import ConfigNotFoundError from '@/errors/types/config-not-found';
+import timezone from '@/utils/timezone';
+
+import weiboUtils from './utils';
 
 export const route: Route = {
     path: '/user_bookmarks/:uid/:routeParams?',
@@ -38,13 +40,13 @@ export const route: Route = {
     maintainers: ['cztchoice'],
     handler,
     url: 'weibo.com/',
-    description: `:::warning
+    description: `::: warning
   此方案必须使用用户\`Cookie\`进行抓取，只可以获取本人的收藏动态
 
   因微博 cookies 的过期与更新方案未经验证，部署一次 Cookie 的有效时长未知
 
   微博用户 Cookie 的配置可参照部署文档
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {
@@ -74,9 +76,8 @@ async function handler(ctx) {
                 url: 'https://m.weibo.cn/api/config',
                 headers: {
                     Referer: 'https://m.weibo.cn/',
-                    'MWeibo-Pwa': 1,
-                    'X-Requested-With': 'XMLHttpRequest',
                     Cookie: config.weibo.cookies,
+                    ...weiboUtils.apiHeaders,
                 },
             });
             return _r.data.data.uid;
@@ -93,9 +94,8 @@ async function handler(ctx) {
                 url: `https://m.weibo.cn/api/container/getIndex?type=uid&value=${uid}`,
                 headers: {
                     Referer: `https://m.weibo.cn/u/${uid}`,
-                    'MWeibo-Pwa': 1,
-                    'X-Requested-With': 'XMLHttpRequest',
                     Cookie: config.weibo.cookies,
+                    ...weiboUtils.apiHeaders,
                 },
             });
             return _r.data;
@@ -119,9 +119,8 @@ async function handler(ctx) {
                 url: `https://m.weibo.cn/api/container/getIndex?containerid=${bookmarkContainerId}&openApp=0`,
                 headers: {
                     Referer: 'https://m.weibo.cn/',
-                    'MWeibo-Pwa': 1,
-                    'X-Requested-With': 'XMLHttpRequest',
                     Cookie: config.weibo.cookies,
+                    ...weiboUtils.apiHeaders,
                 },
             });
             return _r.data.data.cards;
@@ -167,7 +166,7 @@ async function handler(ctx) {
 
                 // 评论的处理
                 if (displayComments === '1') {
-                    description = await weiboUtils.formatComments(ctx, description, item.mblog);
+                    description = await weiboUtils.formatComments(ctx, description, item.mblog, '0');
                 }
 
                 // 文章的处理

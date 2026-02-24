@@ -1,7 +1,9 @@
-import type { Data, Route } from '@/types';
 import type { Context } from 'hono';
+
 import { config } from '@/config';
 import ConfigNotFoundError from '@/errors/types/config-not-found';
+import type { Data, Route } from '@/types';
+
 import type { GroupInfoResponse, TopicsResponse } from './types';
 import { customFetch, generateTopicDataItem } from './utils';
 
@@ -31,8 +33,8 @@ export const route: Route = {
     },
     handler,
     description: `| all  | digests | by_owner | questions | tasks |
-    | ---- | ------ | --------- | -------- | ------ |
-    | 最新 | 精华    | 只看星主    | 问答      | 作业   |`,
+| ---- | ------ | --------- | -------- | ------ |
+| 最新 | 精华    | 只看星主    | 问答      | 作业   |`,
 };
 
 async function handler(ctx: Context): Promise<Data> {

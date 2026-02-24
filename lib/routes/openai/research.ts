@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
+
 import { getApiUrl, parseArticle } from './common';
 
 export const route: Route = {
     path: '/research',
-    categories: ['new-media'],
+    categories: ['programming'],
     example: '/openai/research',
     parameters: {},
     features: {

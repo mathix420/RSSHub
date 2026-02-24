@@ -1,5 +1,6 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import ofetch from '@/utils/ofetch';
+
 import { baseUrl, gqlEndpoint, parseItem } from './utils';
 
 const handler = async (ctx) => {
@@ -69,6 +70,6 @@ export const route: Route = {
         },
     ],
     description: `| 最新   | 热门 | 精华    |
-  | ------ | ---- | ------- |
-  | latest | heat | essence |`,
+| ------ | ---- | ------- |
+| latest | heat | essence |`,
 };

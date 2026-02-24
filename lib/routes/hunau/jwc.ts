@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import getContent from './utils/common';
 
 export const route: Route = {
@@ -16,7 +17,7 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['xky.hunau.edu.cn/', 'xky.hunau.edu.cntzgg_8472', 'xky.hunau.edu.cn/:category'],
+            source: ['xky.hunau.edu.cn/', 'xky.hunau.edu.cn/tzgg_8472', 'xky.hunau.edu.cn/:category'],
             target: '/:category',
         },
     ],
@@ -25,8 +26,8 @@ export const route: Route = {
     handler,
     url: 'xky.hunau.edu.cn/',
     description: `| 分类 | 通知公告 | 教务动态 | 其他教务通知... |
-  | ---- | -------- | -------- | --------------- |
-  | 参数 | tzgg     | jwds     | 对应 URL        |`,
+| ---- | -------- | -------- | --------------- |
+| 参数 | tzgg     | jwds     | 对应 URL        |`,
 };
 
 async function handler(ctx) {

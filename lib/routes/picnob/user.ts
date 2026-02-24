@@ -1,21 +1,60 @@
-import { Route, ViewType } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
-import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
-import { puppeteerGet } from './utils';
-import puppeteer from '@/utils/puppeteer';
+import type { ConnectResult, Options } from 'puppeteer-real-browser';
+import { connect } from 'puppeteer-real-browser';
+
+import { config } from '@/config';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
+import cache from '@/utils/cache';
+import { parseRelativeDate } from '@/utils/parse-date';
+
+const realBrowserOption: Options = {
+    args: ['--start-maximized'],
+    turnstile: true,
+    headless: false,
+    // disableXvfb: true,
+    // ignoreAllFlags:true,
+    customConfig: {
+        chromePath: config.chromiumExecutablePath,
+    },
+    connectOption: {
+        defaultViewport: null,
+    },
+    plugins: [],
+};
+
+async function getPageWithRealBrowser(url: string, selector: string, conn: ConnectResult | null) {
+    try {
+        if (conn) {
+            const page = conn.page;
+            await page.goto(url, { timeout: 30000 });
+            let verify: boolean | null = null;
+            const startDate = Date.now();
+            while (!verify && Date.now() - startDate < 30000) {
+                // eslint-disable-next-line no-await-in-loop, no-restricted-syntax
+                verify = await page.evaluate((sel) => (document.querySelector(sel) ? true : null), selector).catch(() => null);
+                // eslint-disable-next-line no-await-in-loop
+                await new Promise((r) => setTimeout(r, 1000));
+            }
+            return await page.content();
+        } else {
+            const res = await fetch(`${config.puppeteerRealBrowserService}?url=${encodeURIComponent(url)}&selector=${encodeURIComponent(selector)}`);
+            const json = await res.json();
+            return (json.data?.at(0) || '') as string;
+        }
+    } catch {
+        return '';
+    }
+}
 
 export const route: Route = {
-    path: '/user/:id',
-    categories: ['social-media', 'popular'],
+    path: '/user/:id/:type?',
+    categories: ['social-media'],
     example: '/picnob/user/xlisa_olivex',
-    parameters: { id: 'Instagram id' },
+    parameters: {
+        id: 'Instagram id',
+        type: 'Type of profile page (profile or tagged)',
+    },
     features: {
         requireConfig: false,
         requirePuppeteer: true,
@@ -26,113 +65,118 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['picnob.com/profile/:id/*'],
+            source: ['www.pixnoy.com/profile/:id'],
             target: '/user/:id',
         },
+        {
+            source: ['www.pixnoy.com/profile/:id/tagged'],
+            target: '/user/:id/tagged',
+        },
     ],
-    name: 'User Profile - Picnob',
-    maintainers: ['TonyRL', 'micheal-death'],
+    name: 'User Profile - Pixnoy',
+    maintainers: ['TonyRL', 'micheal-death', 'AiraNadih', 'DIYgod', 'hyoban', 'Rongronggg9'],
     handler,
     view: ViewType.Pictures,
 };
 
 async function handler(ctx) {
-    // NOTE: 'picnob' is still available, but all requests to 'picnob' will be redirected to 'pixwox' eventually
-    const baseUrl = 'https://www.pixwox.com';
+    if (!config.puppeteerRealBrowserService && !config.chromiumExecutablePath) {
+        throw new Error('PUPPETEER_REAL_BROWSER_SERVICE or CHROMIUM_EXECUTABLE_PATH is required to use this route.');
+    }
+
+    // NOTE: 'picnob' is still available, but all requests to 'picnob' will be redirected to 'pixnoy' eventually
+    const baseUrl = 'https://www.pixnoy.com';
     const id = ctx.req.param('id');
-    const url = `${baseUrl}/profile/${id}/`;
+    const type = ctx.req.param('type') ?? 'profile';
+    const profileUrl = `${baseUrl}/profile/${id}/${type === 'tagged' ? 'tagged/' : ''}`;
 
-    const browser = await puppeteer();
-    // TODO: can't bypass cloudflare 403 error without puppeteer
-    let html;
-    let usePuppeteer = false;
-    try {
-        const { data } = await got(url, {
-            headers: {
-                accept: 'text/html',
-                referer: 'https://www.google.com/',
-            },
-        });
-        html = data;
-    } catch (error: any) {
-        if (error.message.includes('403')) {
-            html = await puppeteerGet(url, browser);
-            usePuppeteer = true;
-        }
-    }
-    const $ = load(html);
-    const profileName = $('h1.fullname').text();
-    const userId = $('input[name=userid]').attr('value');
+    let conn: ConnectResult | null = null;
 
-    let posts;
-    if (usePuppeteer) {
-        const data = await puppeteerGet(`${baseUrl}/api/posts?userid=${userId}`, browser);
-        posts = data.posts;
-    } else {
-        const { data } = await got(`${baseUrl}/api/posts`, {
-            headers: {
-                accept: 'application/json',
-            },
-            searchParams: {
-                userid: userId,
-            },
-        });
-        posts = data.posts;
-    }
+    if (!config.puppeteerRealBrowserService) {
+        conn = await connect(realBrowserOption);
 
-    const list = await Promise.all(
-        posts.items.map(async (item) => {
-            const { shortcode, sum, type, time } = item;
-
-            const link = `${baseUrl}/post/${shortcode}/`;
-            if (type === 'img_multi') {
-                item.images = await cache.tryGet(link, async () => {
-                    let html;
-                    if (usePuppeteer) {
-                        html = await puppeteerGet(link, browser);
-                    } else {
-                        const { data } = await got(link);
-                        html = data;
-                    }
-                    const $ = load(html);
-                    return [
-                        ...new Set(
-                            $('.post_slide a')
-                                .toArray()
-                                .map((a: any) => {
-                                    a = $(a);
-                                    return {
-                                        ori: a.attr('href'),
-                                        url: a.find('img').attr('data-src'),
-                                    };
-                                })
-                        ),
-                    ];
-                });
+        setTimeout(async () => {
+            if (conn) {
+                await conn.browser.close();
             }
+        }, 60000);
+    }
+
+    const html = await getPageWithRealBrowser(profileUrl, '.post_box', conn);
+    if (!html) {
+        if (conn) {
+            await conn.browser.close();
+            conn = null;
+        }
+        throw new Error('Failed to fetch user profile page. User may not exist or there are no posts available.');
+    }
+
+    const $ = load(html);
+
+    const list = $('.post_box')
+        .toArray()
+        .map((item) => {
+            const $item = $(item);
+            const coverLink = $item.find('.cover_link').attr('href');
+            const shortcode = coverLink?.split('/')?.[2];
+            const image = $item.find('.cover .cover_link img');
+            const title = image.attr('alt') || '';
 
             return {
-                // sum_pure lacks linebreaks/spaces between lines
-                title: load(sum, null, false).text().replaceAll('\n', ' '),
-                description: art(path.join(__dirname, 'templates/desc.art'), {
-                    item: {
-                        ...item,
-                        // Fix linebreaks
-                        sum: sum.replaceAll('\n', '<br>'),
-                    },
-                }),
-                link,
-                pubDate: parseDate(time, 'X'),
+                title,
+                description: `<img src="${image.attr('data-src')}" /><br />${title}`,
+                link: `${baseUrl}${coverLink}`,
+                guid: shortcode,
+                pubDate: parseRelativeDate($item.find('.time .txt').text()),
             };
-        })
-    );
-    await browser.close();
+        });
+
+    const jobs = list.map((item) => cache.tryGet(`picnob:user:${id}:${item.guid}:html`, async () => await getPageWithRealBrowser(item.link, '.view', conn)));
+
+    let htmlList: string[] = [];
+    if (conn) {
+        try {
+            for (const job of jobs) {
+                // eslint-disable-next-line no-await-in-loop
+                const html = await job;
+                htmlList.push(html);
+            }
+        } finally {
+            await conn.browser.close();
+            conn = null;
+        }
+    } else {
+        htmlList = await Promise.all(jobs);
+    }
+
+    const newDescription = htmlList.map((html) => {
+        if (!html) {
+            return '';
+        }
+        const $ = load(html);
+        if ($('.video_img').length > 0) {
+            return `<video src="${$('.video_img a').attr('href')}" poster="${$('.video_img img').attr('data-src')}"></video><br />${$('.sum_full').text()}`;
+        } else {
+            let description = '';
+            for (const pic of $('.pic img').toArray()) {
+                const dataSrc = $(pic).attr('data-src');
+                if (dataSrc) {
+                    description += `<img src="${dataSrc}" /><br />`;
+                }
+            }
+            description += $('.sum_full').text();
+            return description;
+        }
+    });
 
     return {
-        title: `${profileName} (@${id}) - Picnob`,
+        title: `${$('h1.fullname').text()} (@${id}) ${type === 'tagged' ? 'tagged' : 'public'} posts - Picnob`,
         description: $('.info .sum').text(),
-        link: url,
+        link: profileUrl,
         image: $('.ava .pic img').attr('src'),
-        item: list,
+        item: list.map((item, index) => ({
+            ...item,
+            description: newDescription[index] || item.description,
+        })),
     };
 }

@@ -1,8 +1,9 @@
+import { load } from 'cheerio';
+
 import InvalidParameterError from '@/errors/types/invalid-parameter';
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 
 export const route: Route = {
     path: '/ranking/:type',
@@ -21,8 +22,8 @@ export const route: Route = {
     maintainers: ['immmortal', 'luyuhuang'],
     handler,
     description: `| 24h           | 7days    | monthly |
-  | ------------- | -------- | ------- |
-  | 24 小时阅读榜 | 7 天最热 | 月榜    |`,
+| ------------- | -------- | ------- |
+| 24 小时阅读榜 | 7 天最热 | 月榜    |`,
 };
 
 async function handler(ctx) {
@@ -54,14 +55,14 @@ async function handler(ctx) {
     }
 
     const list = $(`#${id} > li`)
-        .map(function () {
+        .toArray()
+        .map((item) => {
             const info = {
-                title: $(this).find('a').text(),
-                link: $(this).find('a').attr('href'),
+                title: $(item).find('a').text(),
+                link: $(item).find('a').attr('href'),
             };
             return info;
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

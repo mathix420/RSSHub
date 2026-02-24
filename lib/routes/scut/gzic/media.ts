@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import { parseDate } from '@/utils/parse-date';
 import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
     path: '/gzic/media',
@@ -20,7 +21,7 @@ export const route: Route = {
     name: '广州国际校区 - 媒体报道',
     maintainers: ['gdzhht'],
     handler,
-    description: `:::warning
+    description: `::: warning
 由于学校网站对非大陆 IP 的访问存在限制，可能需自行部署。
 :::`,
 };

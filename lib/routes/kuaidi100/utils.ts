@@ -1,5 +1,6 @@
 import cache from '@/utils/cache';
 import got from '@/utils/got';
+
 const wwwid_key = 'kuaidi100-wwwid';
 const csrf_key = 'kuaidi100-csrf';
 const globacsrftoken_key = 'kuaidi100-globacsrftoken';
@@ -145,7 +146,7 @@ export default {
         const list = await getCompanyList();
         const company = list.find((c) => c.number === number);
         if (company) {
-            if (number.includes('shunfeng') && !isNaN(phone) && String(phone).length !== 4) {
+            if (number.includes('shunfeng') && !Number.isNaN(phone) && String(phone).length !== 4) {
                 return {
                     status: false,
                     message: '顺丰查询需要手机号后四位！',

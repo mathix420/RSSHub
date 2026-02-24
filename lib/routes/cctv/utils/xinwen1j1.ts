@@ -1,6 +1,7 @@
+import { load } from 'cheerio';
+
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 //
 // 测试http://localhost:1200/cctv/xinwen1j1
@@ -9,7 +10,7 @@ import { parseDate } from '@/utils/parse-date';
 async function loadContent(link) {
     const res = await got({ method: 'get', url: link });
     const $ = load(res.data);
-    // console.log($('div.image').get().text())
+    // console.log($('div.image').toArray().text())
     // console.log('********')
     const js_txt = '' + $('script');
 

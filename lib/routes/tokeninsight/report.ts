@@ -1,8 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 const baseURL = 'https://www.tokeninsight.com/';
 const title = 'TokenInsight';
 const link = 'https://www.tokeninsight.com/';
@@ -31,9 +33,9 @@ export const route: Route = {
     handler,
     description: `Language:
 
-  | Chinese | English |
-  | ------- | ------- |
-  | zh      | en      |`,
+| Chinese | English |
+| ------- | ------- |
+| zh      | en      |`,
 };
 
 async function handler(ctx) {

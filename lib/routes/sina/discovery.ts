@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { getRollNewsList, parseRollNewsList, parseArticle } from './utils';
+
+import { getRollNewsList, parseArticle, parseRollNewsList } from './utils';
 
 const link = 'https://tech.sina.com.cn/discovery/';
 const map = new Map([
@@ -31,8 +32,8 @@ export const route: Route = {
     maintainers: ['LogicJake'],
     handler,
     description: `| 最新 | 天文航空 | 动物植物 | 自然地理 | 历史考古 | 生命医学 | 生活百科 | 科技前沿 |
-  | ---- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-  | zx   | twhk     | dwzw     | zrdl     | lskg     | smyx     | shbk     | kjqy     |`,
+| ---- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| zx   | twhk     | dwzw     | zrdl     | lskg     | smyx     | shbk     | kjqy     |`,
 };
 
 async function handler(ctx) {

@@ -1,10 +1,12 @@
-import { DataItem, Route, Data } from '@/types';
-import cache from '@/utils/cache';
-import { joinUrl } from './utils';
-import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
+
+import type { Data, DataItem, Route } from '@/types';
+import cache from '@/utils/cache';
 import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
+
+import { joinUrl } from './utils';
 
 export const route: Route = {
     path: '/bgw/:code',
@@ -30,8 +32,8 @@ export const route: Route = {
     handler,
     url: 'swpu.edu.cn/',
     description: `| 栏目 | 重要通知公告 | 部门通知公告 | 本周活动 |
-  | ---- | ------------ | ------------ | -------- |
-  | 代码 | zytzgg       | bmtzgg       | bzhd     |`,
+| ---- | ------------ | ------------ | -------- |
+| 代码 | zytzgg       | bmtzgg       | bzhd     |`,
 };
 
 async function handler(ctx): Promise<Data> {

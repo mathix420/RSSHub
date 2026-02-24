@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import buildData from '@/utils/common-config';
 
 export const route: Route = {
@@ -18,10 +18,10 @@ export const route: Route = {
     maintainers: ['zxx-457'],
     handler,
     description: `| Time frame |
-  | ---------- |
-  | upcoming   |
-  | past       |
-  | both       |`,
+| ---------- |
+| upcoming   |
+| past       |
+| both       |`,
 };
 
 async function handler(ctx) {

@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -12,10 +13,21 @@ export const route: Route = {
             target: '/:path',
         },
     ],
-    name: 'Unknown',
-    maintainers: [],
+    name: 'Generic News',
+    maintainers: ['nczitzk'],
     handler,
-    url: 'rfi.fr/*path',
+    url: 'rfi.fr',
+    example: '/rfi',
+    description: `::: tip
+-   To subscribe to [English News](https://www.rfi.fr/en/), which URL is \`https://www.rfi.fr/en\`, you can get the route as [\`/rfi/en\`](https://rsshub.app/rfi/en).
+-   To subscribe to [English Europe News](https://www.rfi.fr/en/europe/), which URL is \`https://www.rfi.fr/en/europe\`, you can get the route as [\`/rfi/en/europe\`](https://rsshub.app/rfi/en/europe).
+-   To subscribe to topic [Paris Olympics 2024](https://www.rfi.fr/en/tag/paris-olympics-2024/), which URL is \`https://www.rfi.fr/en/tag/paris-olympics-2024\`, you can get the route as [\`/rfi/en/tag/paris-olympics-2024\`](https://rsshub.app/rfi/en/tag/paris-olympics-2024).
+:::
+
+::: warning
+This route does not support podcasts, please use the Offical RSS feed instead.
+:::
+`,
 };
 
 async function handler(ctx) {
@@ -53,7 +65,7 @@ async function handler(ctx) {
                 item.pubDate = parseDate(ldJson?.datePublished);
                 item.updated = parseDate(ldJson?.dateModified);
                 item.author = ldJson?.author.map((author) => author.name).join(', ');
-                item.category = ldJson?.keywords.split(',');
+                item.category = ldJson?.keywords;
 
                 if (ldJson?.audio) {
                     item.itunes_item_image = ldJson.audio.thumbnailUrl;

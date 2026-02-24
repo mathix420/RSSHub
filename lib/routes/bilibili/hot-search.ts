@@ -1,5 +1,6 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
+
 import cache from './cache';
 import utils from './utils';
 
@@ -18,7 +19,7 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['www.bilibili.com/'],
+            source: ['www.bilibili.com/', 'm.bilibili.com/'],
         },
     ],
     name: '热搜',

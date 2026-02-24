@@ -1,9 +1,10 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
-import cache from '@/utils/cache';
-import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
 
 const rootUrl = 'http://www.design.zjut.edu.cn/';
 const host = 'http://www.design.zjut.edu.cn/BigClass.jsp?';
@@ -49,7 +50,8 @@ async function handler(ctx) {
     const $ = load(listResponse.data);
 
     const list = $("td[class='newstd'] .news2")
-        .map((index, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const title = item.find('a').text();
 
@@ -69,8 +71,7 @@ async function handler(ctx) {
                 pubDate: parseDate(date),
                 link,
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>

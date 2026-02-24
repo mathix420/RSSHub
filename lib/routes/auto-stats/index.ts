@@ -1,10 +1,11 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
-import timezone from '@/utils/timezone';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/:category?',
@@ -23,8 +24,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 信息快递 | 工作动态 | 专题分析 |
-  | -------- | -------- | -------- |
-  | xxkd     | gzdt     | ztfx     |`,
+| -------- | -------- | -------- |
+| xxkd     | gzdt     | ztfx     |`,
 };
 
 async function handler(ctx) {
@@ -72,7 +73,10 @@ async function handler(ctx) {
         )
     );
 
-    const subtitle = $('title').text().split(/——/).pop();
+    const subtitle = $('title')
+        .text()
+        .split(/——/)
+        .pop();
     const image = new URL('images/logo.jpg', rootUrl).href;
 
     return {

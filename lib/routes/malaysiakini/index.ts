@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { FetchError } from 'ofetch';
+
+import { config } from '@/config';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import parser from '@/utils/rss-parser';
-import { config } from '@/config';
-import { FetchError } from 'ofetch';
 
 export const route: Route = {
     path: '/:lang/:category?',
@@ -41,15 +42,15 @@ export const route: Route = {
     maintainers: ['quiniapiezoelectricity'],
     handler,
     description: `
-  | Language | English | Bahasa Malaysia | 华文     |
-  | -------- | ------ | ------- | ------ | 
-  | \`:lang\`  | \`en\`    | \`my\`   | \`zh\`    |
+| Language | English | Bahasa Malaysia | 华文     |
+| -------- | ------ | ------- | ------ | 
+| \`:lang\`  | \`en\`    | \`my\`   | \`zh\`    |
 
-  | Category               | \`:category\` |
-  | ---------------------- | ------------- |
-  | News                   | \`news\`      |
-  | Columns                | \`columns\`   |
-  | From Our Readers       | \`letters\`   |`,
+| Category               | \`:category\` |
+| ---------------------- | ------------- |
+| News                   | \`news\`      |
+| Columns                | \`columns\`   |
+| From Our Readers       | \`letters\`   |`,
     radar: [
         {
             source: ['malaysiakini.com/'],

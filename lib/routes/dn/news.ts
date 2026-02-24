@@ -1,14 +1,12 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
+import { load } from 'cheerio';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+import timezone from '@/utils/timezone';
+
+import { renderDescription } from './templates/description';
 
 export const route: Route = {
     path: '/:language/news/:category?',
@@ -28,18 +26,18 @@ export const route: Route = {
     handler,
     description: `#### Language
 
-  | English | 中文  |
-  | ------- | ----- |
-  | en-us   | zh-cn |
+| English | 中文  |
+| ------- | ----- |
+| en-us   | zh-cn |
 
-  #### Category
+#### Category
 
-  | English Category     | 中文分类 | Category id |
-  | -------------------- | -------- | ----------- |
-  | The Latest           | 最新     |             |
-  | Industry Information | 行业资讯 | category-1  |
-  | Knowledge            | 域名知识 | category-2  |
-  | Investment           | 域名投资 | category-3  |`,
+| English Category     | 中文分类 | Category id |
+| -------------------- | -------- | ----------- |
+| The Latest           | 最新     |             |
+| Industry Information | 行业资讯 | category-1  |
+| Knowledge            | 域名知识 | category-2  |
+| Investment           | 域名投资 | category-3  |`,
 };
 
 async function handler(ctx) {
@@ -64,7 +62,7 @@ async function handler(ctx) {
             return {
                 title: item.find('h2.ellipse2').text(),
                 link: new URL(item.prop('href'), rootUrl).href,
-                description: art(path.join(__dirname, 'templates/description.art'), {
+                description: renderDescription({
                     image: image
                         ? {
                               src: image.prop('src'),
@@ -89,7 +87,7 @@ async function handler(ctx) {
                 const content = load(detailResponse);
 
                 item.title = content('h1.tit').text();
-                item.description = art(path.join(__dirname, 'templates/description.art'), {
+                item.description = renderDescription({
                     abstracts: content('div.abstract').html(),
                     description: content('div.detail').html(),
                 });

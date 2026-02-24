@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -33,7 +34,7 @@ async function handler(ctx) {
     const data = response.data;
 
     const $ = load(data);
-    const list = $(`#ReportIDname > a`).parent().parent().get();
+    const list = $(`#ReportIDname > a`).parent().parent().toArray();
 
     const process = await Promise.all(
         list.map(async (item) => {
@@ -48,7 +49,7 @@ async function handler(ctx) {
                 pubDate: timezone(parseDate(time), +8),
             };
             const other = await loadContent(String(itemUrl));
-            return Object.assign({}, single, other);
+            return { ...single, ...other };
         })
     );
     return {

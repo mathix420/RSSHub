@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -22,14 +23,17 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['jsjxy.stbu.edu.cn/news', 'jsjxy.stbu.edu.cn', 'stbu.edu.cn'],
+            source: ['jsjxy.stbu.edu.cn/news', 'jsjxy.stbu.edu.cn'],
+        },
+        {
+            source: ['stbu.edu.cn'],
         },
     ],
     name: '计算机学院 - 通知公告',
     maintainers: ['HyperCherry'],
     handler,
     url: 'jsjxy.stbu.edu.cn/news',
-    description: `:::warning
+    description: `::: warning
 计算机学院通知公告疑似禁止了非大陆 IP 访问，使用路由需要自行 [部署](https://docs.rsshub.app/deploy/)。
 :::`,
 };
@@ -38,9 +42,6 @@ async function handler() {
     const baseUrl = 'https://jsjxy.stbu.edu.cn/news/';
     const { data: response } = await got(baseUrl, {
         responseType: 'buffer',
-        https: {
-            rejectUnauthorized: false,
-        },
     });
     const $ = load(gbk2utf8(response));
     const list = $('.content dl h4')
@@ -59,9 +60,6 @@ async function handler() {
             cache.tryGet(item.link, async () => {
                 const { data: response } = await got(item.link, {
                     responseType: 'buffer',
-                    https: {
-                        rejectUnauthorized: false,
-                    },
                 });
                 const $ = load(gbk2utf8(response));
                 item.description = $('.content14').first().html().trim();

@@ -1,10 +1,13 @@
-import type { Data, DataItem, Route } from '@/types';
-import type { Context } from 'hono';
-import { config } from '@/config';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
-import { asyncPoolAll, fetchThread, generateDescription, getDate, bbsOrigin } from '../utils';
+import type { Context } from 'hono';
+import pMap from 'p-map';
+
+import { config } from '@/config';
+import type { Data, DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
+
+import { bbsOrigin, fetchThread, generateDescription, getDate } from '../utils';
 
 export const route: Route = {
     name: 'BBS - 板块',
@@ -34,7 +37,7 @@ export const route: Route = {
             },
         ],
     },
-    description: `:::warning
+    description: `::: warning
 百合会BBS访问部分板块需要用户登录认证，请参考配置说明
 :::`,
 };
@@ -81,8 +84,7 @@ async function handler(ctx: Context): Promise<Data> {
             };
         });
 
-    items = await asyncPoolAll(
-        5,
+    items = await pMap(
         items,
         async (item) =>
             (await cache.tryGet(item.link!, async () => {
@@ -105,7 +107,8 @@ async function handler(ctx: Context): Promise<Data> {
                     description,
                     pubDate: item.pubDate,
                 };
-            })) as DataItem
+            })) as DataItem,
+        { concurrency: 5 }
     );
 
     return {

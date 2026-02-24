@@ -1,7 +1,8 @@
-import { Route } from '@/types';
-import { parseDate } from '@/utils/parse-date';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
     path: 'anime/:category/:name',
@@ -38,7 +39,7 @@ async function handler(ctx) {
 
     const $ = load(response);
 
-    const title = $('page-title').text().trim();
+    const title = $('.page-title').text().trim();
 
     const items = $('article')
         .toArray()

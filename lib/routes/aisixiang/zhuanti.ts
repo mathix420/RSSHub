@@ -1,11 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
-import { rootUrl, ossUrl, ProcessFeed } from './utils';
+import { ossUrl, ProcessFeed, rootUrl } from './utils';
 
 export const route: Route = {
     path: '/zhuanti/:id',
@@ -23,9 +24,9 @@ export const route: Route = {
     name: '专题',
     maintainers: ['nczitzk'],
     handler,
-    description: `:::tip
+    description: `::: tip
   更多专题请见 [关键词](http://www.aisixiang.com/zhuanti/)
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

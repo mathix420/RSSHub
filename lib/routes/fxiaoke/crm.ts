@@ -1,8 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 const baseUrl = 'https://www.fxiaoke.com/crm';
 const baseTitle = '纷享销客 CRM';
 const titleMap = new Map([
@@ -30,8 +32,8 @@ export const route: Route = {
     maintainers: ['akynazh'],
     handler,
     description: `| 全部文章 | 文章干货 | CRM 知识 | 纷享动态        | 签约喜报  |
-  | -------- | -------- | -------- | --------------- | --------- |
-  | news     | blog     | articles | about-influence | customers |`,
+| -------- | -------- | -------- | --------------- | --------- |
+| news     | blog     | articles | about-influence | customers |`,
 };
 
 async function handler(ctx) {

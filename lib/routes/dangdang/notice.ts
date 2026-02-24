@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
@@ -31,10 +31,10 @@ export const route: Route = {
     maintainers: ['353325487'],
     handler,
     description: `| 类型     | type |
-  | -------- | ---- |
-  | 全部      | 0    |
-  | 其他      | 1    |
-  | 规则变更   | 2    |`,
+| -------- | ---- |
+| 全部      | 0    |
+| 其他      | 1    |
+| 规则变更   | 2    |`,
 };
 
 async function handler(ctx) {

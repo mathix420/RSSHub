@@ -1,6 +1,8 @@
-import { Route, ViewType } from '@/types';
-import ofetch from '@/utils/ofetch';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
+import ofetch from '@/utils/ofetch';
 
 export const route: Route = {
     path: '/',
@@ -14,7 +16,7 @@ export const route: Route = {
         },
     ],
     name: 'Engineering blogs',
-    maintainers: ['ZiHao256'],
+    maintainers: ['ZiHao256', 'qzydustin'],
     handler,
     url: 'infos.imhcg.cn',
 };
@@ -25,11 +27,11 @@ async function handler() {
     const items = $('li')
         .toArray()
         .map((item) => {
-            const title = $(item).find('a.title').text();
-            const link = $(item).find('a.title').attr('href');
-            const author = $(item).find('p.author').text();
-            const time = $(item).find('p.time').text();
-            const description = $(item).find('p.text').text();
+            const title = $(item).find('a.article-title').text();
+            const link = $(item).find('a.article-title').attr('href');
+            const author = $(item).find('p.article-author').text();
+            const time = $(item).find('p.article-time').text();
+            const description = $(item).find('p.article-text').text();
             return {
                 title,
                 link,

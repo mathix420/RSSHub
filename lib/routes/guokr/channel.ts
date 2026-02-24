@@ -1,7 +1,8 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
-import { parseList, parseItem } from './utils';
 import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import got from '@/utils/got';
+
+import { parseItem, parseList } from './utils';
 
 const channelMap = {
     calendar: 'pac',
@@ -25,8 +26,8 @@ export const route: Route = {
     handler,
     url: 'guokr.com/',
     description: `| 物种日历 | 吃货研究所 | 美丽也是技术活 |
-  | -------- | ---------- | -------------- |
-  | calendar | institute  | beauty         |`,
+| -------- | ---------- | -------------- |
+| calendar | institute  | beauty         |`,
 };
 
 async function handler(ctx) {

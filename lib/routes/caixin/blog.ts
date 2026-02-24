@@ -1,11 +1,13 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import { isValidHost } from '@/utils/valid-host';
 import { parseDate } from '@/utils/parse-date';
+import { isValidHost } from '@/utils/valid-host';
+
 import { parseBlogArticle } from './utils';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 export const route: Route = {
     path: '/blog/:column?',
@@ -38,7 +40,7 @@ async function handler(ctx) {
         const $ = load(response);
         const user = $('div.indexMainConri > script[type="text/javascript"]')
             .text()
-            .substring('window.user = '.length + 1)
+            .slice('window.user = '.length + 1)
             .split(';')[0]
             .replaceAll(/\s/g, '');
         const authorId = user.match(/id:"(\d+)"/)[1];
@@ -67,8 +69,7 @@ async function handler(ctx) {
             pubDate: parseDate(item.publishTime, 'x'),
         }));
 
-        const items = await Promise.all(posts.map((item) => parseBlogArticle(item, cache.tryGet)));
-
+        const items = await Promise.all(posts.map((item) => cache.tryGet(item.link, () => parseBlogArticle(item))));
         return {
             title: `财新博客 - ${authorName}`,
             link,
@@ -90,7 +91,7 @@ async function handler(ctx) {
             link: item.postUrl.replace('http://', 'https://'),
             pubDate: parseDate(item.publishTime, 'x'),
         }));
-        const items = await Promise.all(posts.map((item) => parseBlogArticle(item, cache.tryGet)));
+        const items = await Promise.all(posts.map((item) => cache.tryGet(item.link, () => parseBlogArticle(item))));
 
         return {
             title: `财新博客 - 全部`,

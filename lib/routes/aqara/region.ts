@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 export const route: Route = {
     path: '/:region/:type?',
     name: 'Unknown',
@@ -14,5 +15,5 @@ function handler(ctx) {
 
     const { region = 'en', type = 'news' } = ctx.req.param();
     const redirectTo = `/aqara/${region}/category/${types[type]}`;
-    ctx.redirect(redirectTo);
+    ctx.set('redirect', redirectTo);
 }

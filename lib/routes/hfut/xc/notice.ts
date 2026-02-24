@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import parseList from './utils';
 
 export const route: Route = {
@@ -24,8 +25,8 @@ export const route: Route = {
     maintainers: ['batemax'],
     handler,
     description: `| 通知公告(https://xc.hfut.edu.cn/1955/list.htm) | 院系动态-工作通知(https://xc.hfut.edu.cn/gztz/list.htm) |
-  | ------------ | -------------- |
-  | tzgg         | gztz           |`,
+| ------------ | -------------- |
+| tzgg         | gztz           |`,
 };
 
 async function handler(ctx) {

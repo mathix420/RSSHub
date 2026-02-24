@@ -1,16 +1,15 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderDescription } from './templates/description';
 
 export const route: Route = {
     path: '/:category{.+}?',
+    example: '/wa',
     radar: [
         {
             source: ['abc.net.au/:category*'],
@@ -23,14 +22,14 @@ export const route: Route = {
     name: 'Channel & Topic',
     categories: ['traditional-media'],
     description: `
-  :::tip
+::: tip
   All Topics in [Topic Library](https://abc.net.au/news/topics) are supported, you can fill in the field after \`topic\` in its URL, or fill in the \`documentId\`.
 
   For example, the URL for [Computer Science](https://www.abc.net.au/news/topic/computer-science) is \`https://www.abc.net.au/news/topic/computer-science\`, the \`category\` is \`news/topic/computer-science\`, and the \`documentId\` of the Topic is \`2302\`, so the route is [/abc/news/topic/computer-science](https://rsshub.app/abc/news/topic/computer-science) and [/abc/2302](https://rsshub.app/abc/2302).
 
   The supported channels are all listed in the table below. For other channels, please find the \`documentId\` in the source code of the channel page and fill it in as above.
-  :::`,
-    maintainers: ['nczitzk'],
+:::`,
+    maintainers: ['nczitzk', 'pseudoyu'],
     handler,
 };
 
@@ -41,27 +40,27 @@ async function handler(ctx) {
     const rootUrl = 'https://www.abc.net.au';
     const apiUrl = new URL('news-web/api/loader/channelrefetch', rootUrl).href;
 
-    let currentUrl = '';
+    let currentUrl: string;
     let documentId;
 
-    if (isNaN(category)) {
+    if (Number.isNaN(category)) {
         currentUrl = new URL(category, rootUrl).href;
     } else {
         documentId = category;
         const feedUrl = new URL(`news/feed/${documentId}/rss.xml`, rootUrl).href;
 
-        const { data: feedResponse } = await got(feedUrl);
+        const feedResponse = await ofetch(feedUrl);
         currentUrl = feedResponse.match(/<link>([\w-./:?]+)<\/link>/)[1];
     }
 
-    const { data: currentResponse } = await got(currentUrl);
+    const currentResponse = await ofetch(currentUrl);
 
     const $ = load(currentResponse);
 
     documentId = documentId ?? $('div[data-uri^="coremedia://collection/"]').first().prop('data-uri').split(/\//).pop();
 
-    const { data: response } = await got(apiUrl, {
-        searchParams: {
+    const response = await ofetch(apiUrl, {
+        query: {
             name: 'PaginationArticles',
             documentId,
             size: limit,
@@ -71,8 +70,8 @@ async function handler(ctx) {
     let items = response.collection.slice(0, limit).map((i) => {
         const item = {
             title: i.title.children ?? i.title,
-            link: new URL(i.link.to, rootUrl).href,
-            description: art(path.join(__dirname, 'templates/description.art'), {
+            link: i.link.startsWith('https://') ? i.link : new URL(i.link, rootUrl).href,
+            description: renderDescription({
                 image: i.image
                     ? {
                           src: i.image.imgSrc.split(/\?/)[0],
@@ -99,7 +98,7 @@ async function handler(ctx) {
         items.map((item) =>
             cache.tryGet(item.link, async () => {
                 try {
-                    const { data: detailResponse } = await got(item.link);
+                    const detailResponse = await ofetch(item.link);
 
                     const content = load(detailResponse);
 
@@ -111,7 +110,7 @@ async function handler(ctx) {
                             const element = content(this);
                             if (element.prop('tagName').toLowerCase() === 'figure') {
                                 element.replaceWith(
-                                    art(path.join(__dirname, 'templates/description.art'), {
+                                    renderDescription({
                                         image: {
                                             src: element.find('img').prop('src').split(/\?/)[0],
                                             alt: element.find('figcaption').text().trim(),
@@ -133,14 +132,14 @@ async function handler(ctx) {
                     if (enclosureMatches) {
                         const enclosureMatch = enclosureMatches
                             .map((e) => e.match(new RegExp(enclosurePattern)))
-                            .sort((a, b) => Number.parseInt(a[2], 10) - Number.parseInt(b[2], 10))
+                            .toSorted((a, b) => Number.parseInt(a[2], 10) - Number.parseInt(b[2], 10))
                             .pop();
 
                         item.enclosure_url = enclosureMatch[3];
                         item.enclosure_length = enclosureMatch[2];
                         item.enclosure_type = enclosureMatch[1];
 
-                        item.description = art(path.join(__dirname, 'templates/description.art'), {
+                        item.description = renderDescription({
                             enclosure: {
                                 src: item.enclosure_url,
                                 type: item.enclosure_type,
@@ -149,7 +148,7 @@ async function handler(ctx) {
                     }
 
                     item.description =
-                        art(path.join(__dirname, 'templates/description.art'), {
+                        renderDescription({
                             description: (content('div[data-component="FeatureMedia"]').html() || '') + (content('#body div[data-component="LayoutContainer"] div').first().html() || ''),
                         }) + item.description;
 
@@ -173,7 +172,7 @@ async function handler(ctx) {
         )
     );
 
-    const icon = new URL($('link[rel="apple-touch-icon"]').prop('href'), rootUrl).href;
+    const icon = new URL($('link[rel="apple-touch-icon"]').prop('href') || '', rootUrl).href;
 
     return {
         item: items,

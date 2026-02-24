@@ -1,9 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
+
 import { parseArticle } from './utils';
 
 export const route: Route = {
@@ -28,13 +30,13 @@ export const route: Route = {
     maintainers: ['zhboner', 'lyqluis'],
     handler,
     description: `| 新闻推荐 | 游戏新闻 | 动漫影视 | 智能数码 | 时事焦点    |
-  | -------- | -------- | -------- | -------- | ----------- |
-  |          | game     | acg      | next     | news\_36\_1 |`,
+| -------- | -------- | -------- | -------- | ----------- |
+|          | game     | acg      | next     | news_36_1 |`,
 };
 
 async function handler(ctx) {
     const { category = '' } = ctx.req.param();
-    const isArcPost = category && !isNaN(category); // https://www.3dmgame.com/news/\d+/
+    const isArcPost = category && !Number.isNaN(Number(category)); // https://www.3dmgame.com/news/\d+/
     const url = `https://www.3dmgame.com/${category === 'news_36_1' ? category : 'news/' + category}`;
     const res = await got(url);
     const $ = load(res.data);

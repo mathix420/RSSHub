@@ -1,8 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 import utils from './utils';
 
 const baseUrl = 'https://www.cde.org.cn';
@@ -55,8 +57,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `|    发布通告   |   征求意见  |
-  | :-----------: | :---------: |
-  | domesticGuide | opinionList |`,
+| :-----------: | :---------: |
+| domesticGuide | opinionList |`,
 };
 
 async function handler(ctx) {

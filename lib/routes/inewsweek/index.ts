@@ -1,10 +1,11 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import iconv from 'iconv-lite';
 
 const rootUrl = 'http://news.inewsweek.cn';
 
@@ -31,9 +32,9 @@ export const route: Route = {
     handler,
     description: `提取文章全文。
 
-  | 封面  | 时政     | 社会    | 经济    | 国际  | 调查   | 人物   |
-  | ----- | -------- | ------- | ------- | ----- | ------ | ------ |
-  | cover | politics | society | finance | world | survey | people |`,
+| 封面  | 时政     | 社会    | 经济    | 国际  | 调查   | 人物   |
+| ----- | -------- | ------- | ------- | ----- | ------ | ------ |
+| cover | politics | society | finance | world | survey | people |`,
 };
 
 async function handler(ctx) {

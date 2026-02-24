@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 export const route: Route = {
     path: '/:store',
@@ -41,7 +42,8 @@ async function handler(ctx) {
     $('table').remove();
 
     const items = $('div[data-content-name]')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
 
             return {
@@ -50,8 +52,7 @@ async function handler(ctx) {
                 description: `<p>${item.find('.mb-3').text()}</p>`,
                 link: `${rootUrl}/login?redirect=/redirect/alink/${item.attr('data-content-id')}`,
             };
-        })
-        .get();
+        });
 
     return {
         title: `${$('h1').text()} - ShopBack`,

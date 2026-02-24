@@ -1,14 +1,12 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
+import { load } from 'cheerio';
+import pMap from 'p-map';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import asyncPool from 'tiny-async-pool';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderDescription } from './templates/description';
 
 export const route: Route = {
     path: '/blog/:category{.+}?',
@@ -28,7 +26,7 @@ async function handler(ctx) {
 
     const $ = load(response);
 
-    const items = $('article[id]')
+    const list = $('article[id]')
         .slice(0, limit)
         .toArray()
         .map((item) => {
@@ -39,7 +37,7 @@ async function handler(ctx) {
             return {
                 title,
                 link: item.find('a.articles-grid-link').prop('href'),
-                description: art(path.join(__dirname, 'templates/description.art'), {
+                description: renderDescription({
                     image: {
                         src: item
                             .find('div.articles-grid-img img')
@@ -57,48 +55,46 @@ async function handler(ctx) {
             };
         });
 
-    for await (const item of asyncPool(3, items, (item) =>
-        cache.tryGet(item.link, async () => {
-            const { data: detailResponse } = await got(item.link);
+    const items = await pMap(
+        list,
+        (item) =>
+            cache.tryGet(item.link, async () => {
+                const { data: detailResponse } = await got(item.link);
 
-            const content = load(detailResponse);
+                const content = load(detailResponse);
 
-            content('div.entry-content')
-                .find('img')
-                .each((_, e) => {
-                    content(e).replaceWith(
-                        art(path.join(__dirname, 'templates/description.art'), {
-                            image: {
-                                src: content(e)
-                                    .prop('src')
-                                    .replace(/-\d+x\d+\./, '.'),
-                                width: content(e).prop('width'),
-                                height: content(e).prop('height'),
-                            },
-                        })
-                    );
+                content('div.entry-content')
+                    .find('img')
+                    .each((_, e) => {
+                        content(e).replaceWith(
+                            renderDescription({
+                                image: {
+                                    src: content(e)
+                                        .prop('src')
+                                        .replace(/-\d+x\d+\./, '.'),
+                                },
+                            })
+                        );
+                    });
+
+                item.title = content('meta[property="og:title"]').prop('content');
+                item.description = renderDescription({
+                    image: {
+                        src: content('meta[property="og:image"]').prop('content'),
+                        alt: item.title,
+                    },
+                    description: content('div.entry-content').html(),
                 });
+                item.author = content('meta[property="og:site_name"]').prop('content');
+                item.category = content('div.sections a.section')
+                    .toArray()
+                    .map((c) => content(c).text());
+                item.pubDate = parseDate(content('div.single-date').text(), 'MMM D, YYYY');
 
-            item.title = content('meta[property="og:title"]').prop('content');
-            item.description = art(path.join(__dirname, 'templates/description.art'), {
-                image: {
-                    src: content('meta[property="og:image"]').prop('content'),
-                    alt: item.title,
-                },
-                description: content('div.entry-content').html(),
-            });
-            item.author = content('meta[property="og:site_name"]').prop('content');
-            item.category = content('div.sections a.section')
-                .toArray()
-                .map((c) => content(c).text());
-            item.pubDate = parseDate(content('div.single-date').text(), 'MMM D, YYYY');
-
-            return item;
-        })
-    )) {
-        items.shift();
-        items.push(item);
-    }
+                return item;
+            }),
+        { concurrency: 3 }
+    );
 
     const icon = new URL($('link[rel="icon"]').prop('href'), rootUrl).href;
 

@@ -1,15 +1,19 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import { extractArticle, extractWork } from './utils';
 import { isValidHost } from '@/utils/valid-host';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
+
+import { extractArticle, extractWork } from './utils';
 
 export const route: Route = {
     path: '/user/:uid',
     categories: ['design'],
+    view: ViewType.Pictures,
     example: '/zcool/user/baiyong',
     parameters: { uid: '个性域名前缀或者用户ID' },
     features: {
@@ -39,7 +43,7 @@ export const route: Route = {
 async function handler(ctx) {
     const uid = ctx.req.param('uid');
     let pageUrl = `https://www.zcool.com.cn/u/${uid}`;
-    if (isNaN(uid)) {
+    if (Number.isNaN(uid)) {
         if (!isValidHost(uid)) {
             throw new InvalidParameterError('Invalid uid');
         }

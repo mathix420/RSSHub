@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -25,8 +26,8 @@ export const route: Route = {
     maintainers: ['gylidian'],
     handler,
     description: `| 信息公告 | 新闻快讯 | 科学研究 | 网上公示 | 本科教育 | 研究生教育 |
-  | -------- | -------- | -------- | -------- | -------- | ---------- |
-  | xxgg     | xwkx     | kxyj     | wsgs     | bkjy     | yjsjy      |`,
+| -------- | -------- | -------- | -------- | -------- | ---------- |
+| xxgg     | xwkx     | kxyj     | wsgs     | bkjy     | yjsjy      |`,
 };
 
 async function handler(ctx) {

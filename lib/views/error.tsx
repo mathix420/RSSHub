@@ -1,7 +1,7 @@
 import type { FC } from 'hono/jsx';
 
+import { gitDate, gitHash } from '@/utils/git-hash';
 import { Layout } from '@/views/layout';
-import { gitHash, gitDate } from '@/utils/git-hash';
 
 const Index: FC<{
     requestPath: string;
@@ -26,7 +26,7 @@ const Index: FC<{
                     <p className="message">
                         Error Message:
                         <br />
-                        <code className="mt-2 block max-h-28 overflow-auto bg-zinc-100 align-bottom w-fit details">{message}</code>
+                        <code className="mt-2 block max-h-28 overflow-auto bg-zinc-100 align-bottom w-fit details whitespace-pre-line">{message}</code>
                     </p>
                     <p className="message">
                         Route: <code className="ml-2 bg-zinc-100">{errorRoute}</code>
@@ -135,7 +135,7 @@ const Index: FC<{
                 <a target="_blank" href="https://github.com/DIYgod/RSSHub/graphs/contributors" className="text-[#F5712C]">
                     Contributors
                 </a>{' '}
-                under MIT License.
+                under AGPL-3.0 License.
             </p>
         </div>
     </Layout>

@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import { baseUrl, parsePage } from './utils';
+import type { Route } from '@/types';
 import puppeteer from '@/utils/puppeteer';
+
+import { baseUrl, parsePage } from './utils';
 
 export const route: Route = {
     path: '/master/:channel',
@@ -19,20 +20,20 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| 主頻道名稱 | 主頻道 ID |
-  | ---------- | --------- |
-  | 財經       | 8         |
-  | 產業       | 7         |
-  | 國際       | 9         |
-  | 管理       | 10        |
-  | 環境       | 12        |
-  | 教育       | 13        |
-  | 人物       | 14        |
-  | 政治社會   | 77        |
-  | 調查排行   | 15        |
-  | 健康關係   | 79        |
-  | 時尚品味   | 11        |
-  | 運動生活   | 103       |
-  | 重磅外媒   | 16        |`,
+| ---------- | --------- |
+| 財經       | 8         |
+| 產業       | 7         |
+| 國際       | 9         |
+| 管理       | 10        |
+| 環境       | 12        |
+| 教育       | 13        |
+| 人物       | 14        |
+| 政治社會   | 77        |
+| 調查排行   | 15        |
+| 健康關係   | 79        |
+| 時尚品味   | 11        |
+| 運動生活   | 103       |
+| 重磅外媒   | 16        |`,
 };
 
 async function handler(ctx) {

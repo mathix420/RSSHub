@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -20,8 +21,8 @@ export const route: Route = {
     maintainers: ['budui'],
     handler,
     description: `| 最新 | 党政 | 科研 | 本科生 | 研究生 | 学工思政 | 离退休 |
-  | ---- | ---- | ---- | ------ | ------ | -------- | ------ |
-  |      | dz   | ky   | bk     | yjs    | xgsz     | litui  |`,
+| ---- | ---- | ---- | ------ | ------ | -------- | ------ |
+|      | dz   | ky   | bk     | yjs    | xgsz     | litui  |`,
 };
 
 async function handler(ctx) {

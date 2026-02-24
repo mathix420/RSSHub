@@ -1,5 +1,3 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
 // journals form AAAS publishing group
 //
 // science:        Science
@@ -8,11 +6,14 @@ import cache from '@/utils/cache';
 // scirobotics:    Science Robotics
 // signaling:      Science Signaling
 // stm:            Science Translational Medicine
-
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { baseUrl, fetchDesc, getItem } from './utils';
 import puppeteer from '@/utils/puppeteer';
+
+import { baseUrl, fetchDesc, getItem } from './utils';
 
 export const route: Route = {
     path: '/current/:journal?',
@@ -37,13 +38,13 @@ export const route: Route = {
     maintainers: ['y9c', 'TonyRL'],
     handler,
     description: `|  Short name |    Full name of the journal    | Route                                                                          |
-  | :---------: | :----------------------------: | ------------------------------------------------------------------------------ |
-  |   science   |             Science            | [/science/current/science](https://rsshub.app/science/current/science)         |
-  |    sciadv   |        Science Advances        | [/science/current/sciadv](https://rsshub.app/science/current/sciadv)           |
-  |  sciimmunol |       Science Immunology       | [/science/current/sciimmunol](https://rsshub.app/science/current/sciimmunol)   |
-  | scirobotics |        Science Robotics        | [/science/current/scirobotics](https://rsshub.app/science/current/scirobotics) |
-  |  signaling  |        Science Signaling       | [/science/current/signaling](https://rsshub.app/science/current/signaling)     |
-  |     stm     | Science Translational Medicine | [/science/current/stm](https://rsshub.app/science/current/stm)                 |
+| :---------: | :----------------------------: | ------------------------------------------------------------------------------ |
+|   science   |             Science            | [/science/current/science](https://rsshub.app/science/current/science)         |
+|    sciadv   |        Science Advances        | [/science/current/sciadv](https://rsshub.app/science/current/sciadv)           |
+|  sciimmunol |       Science Immunology       | [/science/current/sciimmunol](https://rsshub.app/science/current/sciimmunol)   |
+| scirobotics |        Science Robotics        | [/science/current/scirobotics](https://rsshub.app/science/current/scirobotics) |
+|  signaling  |        Science Signaling       | [/science/current/signaling](https://rsshub.app/science/current/signaling)     |
+|     stm     | Science Translational Medicine | [/science/current/stm](https://rsshub.app/science/current/stm)                 |
 
   -   Using route (\`/science/current/\` + "short name for a journal") to get current issue of a journal from AAAS.
   -   Leaving it empty (\`/science/current\`) to get update from Science.`,

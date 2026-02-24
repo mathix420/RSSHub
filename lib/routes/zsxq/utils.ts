@@ -1,8 +1,9 @@
-import got from '@/utils/got';
-import type { TopicImage, Topic, BasicResponse, ResponseData } from './types';
-import { parseDate } from '@/utils/parse-date';
 import { config } from '@/config';
 import type { DataItem } from '@/types';
+import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
+
+import type { BasicResponse, ResponseData, Topic, TopicImage } from './types';
 
 export async function customFetch<T extends BasicResponse<ResponseData>>(path: string, retryCount = 0): Promise<T['resp_data']> {
     const apiUrl = 'https://api.zsxq.com/v2';
@@ -18,14 +19,14 @@ export async function customFetch<T extends BasicResponse<ResponseData>>(path: s
     }
     // sometimes the request will fail with code 1059, retry will solve the problem
     if (code === 1059 && retryCount < 3) {
-        return customFetch(path, ++retryCount);
+        return customFetch(path, retryCount + 1);
     }
     throw new Error('something wrong');
 }
 
 function parseTopicContent(text: string = '', images: TopicImage[] = []) {
     let result = text.replaceAll('\n', '<br>');
-    result = result.replaceAll(/<e type="web" href="(.*?)" title="(.*?)" \/>/g, (_, p1, p2) => `<a href=${decodeURIComponent(p1)}>${decodeURIComponent(p2)}</a>`);
+    result = result.replaceAll(/<e type="web" href="(.*?)" title="(.*?)" style="(.*?)" \/>/g, (_, p1, p2) => `<a href=${decodeURIComponent(p1)}>${decodeURIComponent(p2)}</a>`);
     result = result.replaceAll(/<e type="hashtag".*?title="(.*?)" \/>/g, (_, p1) => {
         const title = decodeURIComponent(p1);
         return `<span>${title}</span>`;
@@ -38,6 +39,7 @@ export function generateTopicDataItem(topics: Topic[]): DataItem[] {
     return topics.map((topic) => {
         let description: string | undefined;
         let title = '';
+        const url = `https://wx.zsxq.com/topic/${topic.topic_id}`;
         switch (topic.type) {
             case 'talk':
                 title = topic.talk?.text?.split('\n')[0] ?? '文章';
@@ -66,6 +68,7 @@ export function generateTopicDataItem(topics: Topic[]): DataItem[] {
             title: topic.title ?? title,
             description,
             pubDate: parseDate(topic.create_time),
+            link: url,
         };
     });
 }

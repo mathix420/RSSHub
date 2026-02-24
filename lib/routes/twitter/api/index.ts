@@ -1,10 +1,14 @@
-import ConfigNotFoundError from '@/errors/types/config-not-found';
-import mobileApi from './mobile-api/api';
-import webApi from './web-api/api';
 import { config } from '@/config';
+import ConfigNotFoundError from '@/errors/types/config-not-found';
 
-const enableMobileApi = config.twitter.username && config.twitter.password;
+import devApi from './developer-api/api';
+// import mobileApi from './mobile-api/api';
+import webApi from './web-api/api';
+
+const enableThirdPartyApi = config.twitter.thirdPartyApi;
+// const enableMobileApi = config.twitter.username && config.twitter.password;
 const enableWebApi = config.twitter.authToken;
+const enableDeveloperApi = config.twitter.consumerKey && config.twitter.consumerSecret;
 
 type ApiItem = (id: string, params?: Record<string, any>) => Promise<Record<string, any>> | Record<string, any> | null;
 let api: {
@@ -35,10 +39,12 @@ let api: {
     getHomeLatestTimeline: () => null,
 };
 
-if (enableWebApi) {
+if (enableThirdPartyApi) {
     api = webApi;
-} else if (enableMobileApi) {
-    api = mobileApi;
+} else if (enableWebApi) {
+    api = webApi;
+} else if (enableDeveloperApi) {
+    api = devApi;
 }
 
 export default api;

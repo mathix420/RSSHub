@@ -1,9 +1,10 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
-import { finishArticleItem } from '@/utils/wechat-mp';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
+import { finishArticleItem } from '@/utils/wechat-mp';
 
 export const route: Route = {
     path: '/ershicimi/:id',
@@ -31,7 +32,8 @@ async function handler(ctx) {
     const response = await got(url);
     const $ = load(response.data);
     const items = $('.weui_media_box')
-        .map((_, ele) => {
+        .toArray()
+        .map((ele) => {
             const $item = load(ele);
             const link = $item('.weui_media_title a').attr('href');
             return {
@@ -40,8 +42,7 @@ async function handler(ctx) {
                 link,
                 pubDate: timezone(parseDate($item('.weui_media_extra_info').attr('title')), +8),
             };
-        })
-        .toArray();
+        });
 
     return {
         title: `微信公众号 - ${$('span.name').text()}`,

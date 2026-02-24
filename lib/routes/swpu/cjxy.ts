@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
 export const route: Route = {
@@ -29,8 +30,8 @@ export const route: Route = {
     handler,
     url: 'swpu.edu.cn/',
     description: `| 栏目 | 学院新闻 | 学院通知 |
-  | ---- | -------- | -------- |
-  | 代码 | xyxw     | xytz     |`,
+| ---- | -------- | -------- |
+| 代码 | xyxw     | xytz     |`,
 };
 
 async function handler(ctx) {
@@ -40,7 +41,7 @@ async function handler(ctx) {
     const $ = load(res.data);
 
     let title = $('title').text();
-    title = title.substring(0, title.indexOf('-'));
+    title = title.slice(0, title.indexOf('-'));
 
     const items = $('.main_conRCb > ul > li')
         .toArray()

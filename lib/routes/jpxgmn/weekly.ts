@@ -1,9 +1,11 @@
-import { Route } from '@/types';
-import { originUrl, getArticleDesc } from './utils';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
+import { getArticleDesc, getOriginUrl } from './utils';
 
 export const route: Route = {
     path: '/weekly',
@@ -11,17 +13,20 @@ export const route: Route = {
     example: '/jpxgmn/weekly',
     radar: [
         {
-            source: ['www.12356782.xyz/'],
+            source: ['mei5.vip/'],
             target: '/weekly',
         },
     ],
     name: '本周热门',
     maintainers: ['Urabartin'],
     handler,
+    features: {
+        nsfw: true,
+    },
 };
 
 async function handler() {
-    const response = await ofetch.raw(originUrl);
+    const response = await ofetch.raw(await getOriginUrl());
     const baseUrl = new URL(response.url).origin;
     const $ = load(response._data);
     const items = $('aside div:nth-child(2) li')

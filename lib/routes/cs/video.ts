@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/video/:category?',
@@ -19,7 +20,7 @@ export const route: Route = {
     },
     name: '中证视频',
     description: `| 今日聚焦 | 传闻求证 | 高端访谈 | 投教课堂 | 直播汇 |
-    | -------- | -------- | -------- | -------- | ------ |`,
+| -------- | -------- | -------- | -------- | ------ |`,
     maintainers: ['nczitzk'],
     handler,
 };

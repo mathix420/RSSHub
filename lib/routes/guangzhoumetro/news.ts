@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -28,7 +29,8 @@ async function handler() {
 
     const $ = load(data);
     const list = $('ul.ag_h_w li')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const url = newsUrl + item.find('a').attr('href').slice(2);
             const title = item.find('a').text();
@@ -39,8 +41,7 @@ async function handler() {
                 author: '广州地铁',
                 pubtime: publishTime,
             };
-        })
-        .get();
+        });
 
     return {
         title: '广州地铁新闻',

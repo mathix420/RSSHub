@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 
 export const route: Route = {
     path: '/user/blog/:name',
@@ -18,11 +19,14 @@ export const route: Route = {
     },
     radar: [
         {
+            source: ['luogu.com/blog/:name'],
+        },
+        {
             source: ['luogu.com.cn/blog/:name'],
         },
     ],
     name: '用户博客',
-    maintainers: [],
+    maintainers: ['ftiasch'],
     handler,
 };
 

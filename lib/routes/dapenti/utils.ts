@@ -1,7 +1,8 @@
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -23,7 +24,7 @@ export default {
         const data = iconv.decode(listRes.data, 'gb2312');
         const $ = load(data);
         // 只取最近的三个，取全文rss
-        const list = $('li', 'ul').slice(0, 3).get();
+        const list = $('li', 'ul').slice(0, 3).toArray();
 
         const result_item = await Promise.all(
             list.map((item) =>

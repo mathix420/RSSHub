@@ -1,11 +1,13 @@
-import { Route, ViewType } from '@/types';
-import utils from './utils';
-import { parseDate } from '@/utils/parse-date';
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
 import ofetch from '@/utils/ofetch';
+import { parseDate } from '@/utils/parse-date';
+
+import utils from './utils';
 
 export const route: Route = {
     path: '/playlist/:id',
-    categories: ['multimedia', 'popular'],
+    categories: ['multimedia'],
     view: ViewType.Audios,
     example: '/spotify/playlist/4UBVy1LttvodwivPUuwJk2',
     parameters: { id: 'Playlist ID' },
@@ -26,6 +28,9 @@ export const route: Route = {
         supportPodcast: false,
         supportScihub: false,
     },
+    description: `::: warning
+Due to [limitations by Spotify](https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api), this endpoint is unable to access "Algorithmic and Spotify-owned editorial playlists".
+:::`,
     radar: [
         {
             source: ['open.spotify.com/playlist/:id'],

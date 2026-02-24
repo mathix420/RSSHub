@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -21,8 +22,8 @@ export const route: Route = {
     maintainers: ['TonyRL'],
     handler,
     description: `| 交易通知     | 政策规定             | 业务通知          |
-  | ------------ | -------------------- | ----------------- |
-  | zonghezixun3 | zhengceguiding\_list | yewutongzhi\_list |`,
+| ------------ | -------------------- | ----------------- |
+| zonghezixun3 | zhengceguiding_list | yewutongzhi_list |`,
 };
 
 async function handler(ctx) {

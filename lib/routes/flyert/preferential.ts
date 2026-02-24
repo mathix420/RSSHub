@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
-import got from '@/utils/got';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -41,12 +42,12 @@ async function handler() {
 
     const $ = load(gbk2utf8(response.data));
     const list = $('.comiis_wzli')
-        .map((_index, item) => ({
+        .toArray()
+        .map((item) => ({
             title: $(item).find('.wzbt').text(),
             link: `${host}/${$(item).find('.wzbt a').attr('href')}`,
             description: $(item).find('.wznr > div:first-child').text(),
-        }))
-        .get();
+        }));
 
     const items = await Promise.all(
         list.map((item) =>

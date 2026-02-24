@@ -1,10 +1,11 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
 import { config } from '@/config';
-import { getOriginAvatar } from './utils';
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import logger from '@/utils/logger';
 import puppeteer from '@/utils/puppeteer';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
+
+import { getOriginAvatar } from './utils';
 
 export const route: Route = {
     path: '/live/:rid',
@@ -31,7 +32,7 @@ export const route: Route = {
 
 async function handler(ctx) {
     const rid = ctx.req.param('rid');
-    if (isNaN(rid)) {
+    if (Number.isNaN(rid)) {
         throw new InvalidParameterError('Invalid room ID. Room ID should be a number.');
     }
 
@@ -58,7 +59,7 @@ async function handler(ctx) {
             await page.goto(pageUrl, {
                 waitUntil: 'networkidle2',
             });
-            browser.close();
+            await browser.close();
 
             return roomInfo;
         },

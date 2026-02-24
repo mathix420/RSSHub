@@ -1,13 +1,11 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
+import { load } from 'cheerio';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import { art } from '@/utils/render';
-import path from 'node:path';
+
+import { renderDescription } from './templates/description';
 
 export const handler = async (ctx) => {
     const { language = 'CN', category = 'paper' } = ctx.req.param();
@@ -27,7 +25,7 @@ export const handler = async (ctx) => {
             item = $(item);
 
             const title = item.find('h2').text();
-            const description = art(path.join(__dirname, 'templates/description.art'), {
+            const description = renderDescription({
                 intro: item.find('div.deheng_newscontent p').text(),
             });
 
@@ -48,7 +46,7 @@ export const handler = async (ctx) => {
 
                 const description =
                     item.description +
-                    art(path.join(__dirname, 'templates/description.art'), {
+                    renderDescription({
                         description: $$('div.news_content').html(),
                     });
                 const image = $$('div.news_content img').prop('src');
@@ -90,13 +88,13 @@ export const route: Route = {
     handler,
     example: '/dehenglaw/CN/paper',
     parameters: { language: '语言，默认为中文，即 CN，可在对应分类页 URL 中找到，可选 CN 和 EN', category: '分类，默认为专业文章，即 paper，可在对应分类页 URL 中找到' },
-    description: `:::tip
+    description: `::: tip
   若订阅 [专业文章](https://dehenglaw.com/)，网址为 \`https://www.dehenglaw.com/CN/paper/0008/000902.aspx\`。截取 \`https://dehenglaw.com/\` 到末尾 \`/0008/000902.aspx\` 的部分 \`CN/paper\` 作为参数填入，此时路由为 [\`/dehenglaw/CN/paper\`](https://rsshub.app/dehenglaw/CN/paper)。
 
-  | 专业文章 | 出版物  | 德恒论坛 |
-  | -------- | ------- | -------- |
-  | paper    | publish | luntan   |
-  :::`,
+| 专业文章 | 出版物  | 德恒论坛 |
+| -------- | ------- | -------- |
+| paper    | publish | luntan   |
+:::`,
     categories: ['new-media'],
 
     features: {

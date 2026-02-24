@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 const host = 'http://www.cmse.sdu.edu.cn/';
@@ -25,8 +26,8 @@ export const route: Route = {
     maintainers: ['Ji4n1ng'],
     handler,
     description: `| 通知公告 | 学院新闻 | 本科生教育 | 研究生教育 | 学术动态 |
-  | -------- | -------- | ---------- | ---------- | -------- |
-  | 0        | 1        | 2          | 3          | 4        |`,
+| -------- | -------- | ---------- | ---------- | -------- |
+| 0        | 1        | 2          | 3          | 4        |`,
 };
 
 async function handler(ctx) {
@@ -37,7 +38,8 @@ async function handler(ctx) {
     const $ = load(response.data);
 
     let item = $('.article_list li')
-        .map((_, e) => {
+        .toArray()
+        .map((e) => {
             e = $(e);
             const a = e.find('a');
             return {
@@ -45,8 +47,7 @@ async function handler(ctx) {
                 link: a.attr('href'),
                 pubDate: parseDate(e.find('.date').text(), 'YYYY/MM/DD'),
             };
-        })
-        .get();
+        });
 
     item = await Promise.all(
         item

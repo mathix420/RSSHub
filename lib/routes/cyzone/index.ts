@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { rootUrl, apiRootUrl, processItems, getInfo } from './util';
+
+import { apiRootUrl, getInfo, processItems, rootUrl } from './util';
 
 export const route: Route = {
     path: ['/channel/:id?', '/:id?'],
@@ -14,16 +15,16 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 最新 | 快鲤鱼 | 创投 | 科创板 | 汽车 |
-  | ---- | ------ | ---- | ------ | ---- |
-  | news | 5      | 14   | 13     | 8    |
+| ---- | ------ | ---- | ------ | ---- |
+| news | 5      | 14   | 13     | 8    |
 
-  | 海外 | 消费 | 科技 | 医疗 | 文娱 |
-  | ---- | ---- | ---- | ---- | ---- |
-  | 10   | 9    | 7    | 27   | 11   |
+| 海外 | 消费 | 科技 | 医疗 | 文娱 |
+| ---- | ---- | ---- | ---- | ---- |
+| 10   | 9    | 7    | 27   | 11   |
 
-  | 城市 | 政策 | 特写 | 干货 | 科技股 |
-  | ---- | ---- | ---- | ---- | ------ |
-  | 16   | 15   | 6    | 12   | 33     |`,
+| 城市 | 政策 | 特写 | 干货 | 科技股 |
+| ---- | ---- | ---- | ---- | ------ |
+| 16   | 15   | 6    | 12   | 33     |`,
 };
 
 async function handler(ctx) {

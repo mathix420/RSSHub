@@ -1,5 +1,6 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import got from '@/utils/got';
+
 import apiKey from './api-key';
 import { MEDIA_TYPE_TO_ITEM_HANDLE } from './utils';
 
@@ -47,15 +48,15 @@ export const route: Route = {
     handler,
     description: `When \`mediaType\` is \`tv\`, \`sheet\` should be:
 
-  | Airing Today | On TV      | Top Rated |
-  | ------------ | ---------- | --------- |
-  | airing-today | on-the-air | top-rated |
+| Airing Today | On TV      | Top Rated |
+| ------------ | ---------- | --------- |
+| airing-today | on-the-air | top-rated |
 
   When \`mediaType\` is \`movie\`, \`sheet\` should be:
 
-  | Now Playing | Upcoming | Top Rated |
-  | ----------- | -------- | --------- |
-  | now-playing | upcoming | top-rated |`,
+| Now Playing | Upcoming | Top Rated |
+| ----------- | -------- | --------- |
+| now-playing | upcoming | top-rated |`,
 };
 
 async function handler(ctx) {

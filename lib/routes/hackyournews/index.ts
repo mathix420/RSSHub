@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio'; // an HTML parser with a jQuery-like API
+
+import type { Route } from '@/types';
 // Require necessary modules
 import got from '@/utils/got'; // a customised got
-import { load } from 'cheerio'; // an HTML parser with a jQuery-like API
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -24,7 +25,8 @@ async function handler() {
     const $ = load(response);
 
     const item = $('tr.story')
-        .map((_, story) => {
+        .toArray()
+        .map((story) => {
             const title = $(story).find('a').first().text();
             const nextRow = $(story).next();
             const metas = nextRow.text().trimStart().split('|');
@@ -41,8 +43,8 @@ async function handler() {
             const comments = Number.parseInt(a.text());
             const description = nextRow
                 .find('p')
-                .map((_, p) => $(p).text())
-                .get()
+                .toArray()
+                .map((p) => $(p).text())
                 .join('<br>');
             return {
                 title,
@@ -54,8 +56,7 @@ async function handler() {
                 pubDate,
                 description,
             };
-        })
-        .get();
+        });
 
     return {
         title: 'Index',

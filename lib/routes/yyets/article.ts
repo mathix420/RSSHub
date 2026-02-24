@@ -1,7 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
 
@@ -10,8 +12,23 @@ const baseURL = 'https://yysub.net';
 export const route: Route = {
     path: '/article/:type?',
     categories: ['multimedia'],
+    view: ViewType.Articles,
     example: '/yyets/article',
-    parameters: { type: '[' },
+    parameters: {
+        type: {
+            description: '类型',
+            options: [
+                { value: 'all', label: '全部' },
+                { value: 'news', label: '影视资讯' },
+                { value: 'report', label: '收视快报' },
+                { value: 'm_review', label: '人人影评' },
+                { value: 't_review', label: '人人剧评' },
+                { value: 'new_review', label: '新剧评测' },
+                { value: 'recom', label: '片单推荐' },
+            ],
+            default: 'all',
+        },
+    },
     features: {
         requireConfig: false,
         requirePuppeteer: false,
@@ -24,8 +41,8 @@ export const route: Route = {
     maintainers: ['wb121017405'],
     handler,
     description: `| 全部 | 影视资讯 | 收视快报 | 人人影评  | 人人剧评  | 新剧评测    | 片单推荐 |
-  | ---- | -------- | -------- | --------- | --------- | ----------- | -------- |
-  |      | news     | report   | m\_review | t\_review | new\_review | recom    |`,
+| ---- | -------- | -------- | --------- | --------- | ----------- | -------- |
+|      | news     | report   | m_review | t_review | new_review | recom    |`,
 };
 
 async function handler(ctx) {

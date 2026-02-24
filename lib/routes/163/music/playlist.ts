@@ -1,11 +1,8 @@
-import { Route } from '@/types';
-import { getCurrentPath } from '@/utils/helpers';
-const __dirname = getCurrentPath(import.meta.url);
-
-import got from '@/utils/got';
 import { config } from '@/config';
-import { art } from '@/utils/render';
-import path from 'node:path';
+import type { Route } from '@/types';
+import got from '@/utils/got';
+
+import { renderPlaylistDescription } from '../templates/music/playlist';
 
 export const route: Route = {
     path: '/music/playlist/:id',
@@ -61,13 +58,14 @@ async function handler(ctx) {
             const singer = thisSong.artists.length === 1 ? thisSong.artists[0].name : thisSong.artists.reduce((prev, cur) => (prev.name || prev) + '/' + cur.name);
             return {
                 title: `${thisSong.name} - ${singer}`,
-                description: art(path.join(__dirname, '../templates/music/playlist.art'), {
+                description: renderPlaylistDescription({
                     singer,
                     album: thisSong.album.name,
                     date: new Date(thisSong.album.publishTime).toLocaleDateString(),
                     picUrl: thisSong.album.picUrl,
                 }),
-                link: `https://music.163.com/#/song?id=${item.id}`,
+                link: `https://music.163.com/song?id=${item.id}`,
+                guid: `https://music.163.com/#/song?id=${item.id}`,
                 pubDate: new Date(item.at),
                 author: singer,
             };

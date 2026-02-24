@@ -1,8 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import { parseRelativeDate, parseDate } from '@/utils/parse-date';
+import { parseDate, parseRelativeDate } from '@/utils/parse-date';
 
 const baseUrl = 'https://bbs.kanxue.com/';
 const categoryId = {
@@ -32,28 +33,28 @@ export const route: Route = {
     maintainers: ['renzhexigua'],
     handler,
     description: `| 版块           | category  |
-    | -------------- | --------- |
-    | 智能设备       | iot       |
-    | Android 安全   | android   |
-    | iOS 安全       | ios       |
-    | HarmonyOS 安全 | harmonyos |
-    | 软件逆向       | re        |
-    | 编程技术       | coding    |
-    | 加壳脱壳       | unpack    |
-    | 密码应用       | crypto    |
-    | 二进制漏洞     | vuln      |
-    | CTF 对抗       | ctf       |
-    | Pwn            | pwn       |
-    | WEB 安全       | web       |
-    | 茶余饭后       | chat      |
-    | 极客空间       | geekzone  |
-    | 外文翻译       | translate |
-    | 全站           | all       |
-    
-    | 类型     | type   |
-    | -------- | ------ |
-    | 最新主题 | latest |
-    | 精华主题 | digest |`,
+| -------------- | --------- |
+| 智能设备       | iot       |
+| Android 安全   | android   |
+| iOS 安全       | ios       |
+| HarmonyOS 安全 | harmonyos |
+| 软件逆向       | re        |
+| 编程技术       | coding    |
+| 加壳脱壳       | unpack    |
+| 密码应用       | crypto    |
+| 二进制漏洞     | vuln      |
+| CTF 对抗       | ctf       |
+| Pwn            | pwn       |
+| WEB 安全       | web       |
+| 茶余饭后       | chat      |
+| 极客空间       | geekzone  |
+| 外文翻译       | translate |
+| 全站           | all       |
+
+| 类型     | type   |
+| -------- | ------ |
+| 最新主题 | latest |
+| 精华主题 | digest |`,
 };
 
 const timeDiff = 1000 * 60 * 60 * 24 * 3;
@@ -73,15 +74,13 @@ async function handler(ctx) {
             path = `forum-${categoryId[category][0]}.html`;
             title = `看雪论坛最新主题 - ${categoryId[category][1]}`;
         }
-    } else {
+    } else if (category === 'digest') {
         // category未知时则获取全站最新帖
-        if (category === 'digest') {
-            path = 'new-digest.htm';
-            title = '看雪论坛精华主题';
-        } else {
-            path = 'new-tid.htm';
-            title = '看雪论坛最新主题';
-        }
+        path = 'new-digest.htm';
+        title = '看雪论坛精华主题';
+    } else {
+        path = 'new-tid.htm';
+        title = '看雪论坛最新主题';
     }
 
     const response = await got({
@@ -99,15 +98,16 @@ async function handler(ctx) {
         list
             ? list
                   // fix .thread .top_3
-                  .filter((_, elem) => {
+                  .toArray()
+                  .filter((elem) => {
                       const timeStr = $('.date', elem).eq(0).text();
-                      const pubDate = timeStr.endsWith('前') ? parseRelativeDate(timeStr) : parseDate(timeStr.substring(1));
+                      const pubDate = timeStr.endsWith('前') ? parseRelativeDate(timeStr) : parseDate(timeStr.slice(1));
                       return !elem.attribs.class.includes('top') || Date.now() - pubDate.valueOf() < timeDiff;
                   })
-                  .map((_, elem) => {
+                  .map((elem) => {
                       const subject = $('.subject a', elem).eq(1);
                       const timeStr = $('.date', elem).eq(0).text();
-                      const pubDate = timeStr.endsWith('前') ? parseRelativeDate(timeStr) : parseDate(timeStr.substring(1));
+                      const pubDate = timeStr.endsWith('前') ? parseRelativeDate(timeStr) : parseDate(timeStr.slice(1));
 
                       const link = `${baseUrl}${subject.attr('href')}`;
                       const key = `kanxue: ${link}`;
@@ -140,7 +140,6 @@ async function handler(ctx) {
                           };
                       });
                   })
-                  .get()
             : []
     );
 

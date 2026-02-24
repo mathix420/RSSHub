@@ -1,4 +1,5 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
+
 import { handler } from './common';
 
 export const route: Route = {
@@ -18,6 +19,6 @@ export const route: Route = {
     handler,
     url: 'cnbeta.com.tw',
     description: `| 影视  | 音乐  | 游戏 | 动漫  | 趣闻  | 科学    | 软件 |
-  | ----- | ----- | ---- | ----- | ----- | ------- | ---- |
-  | movie | music | game | comic | funny | science | soft |`,
+| ----- | ----- | ---- | ----- | ----- | ------- | ---- |
+| movie | music | game | comic | funny | science | soft |`,
 };

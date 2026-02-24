@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import got from '@/utils/got';
 import ofetch from '@/utils/ofetch';
-import { load } from 'cheerio';
 
 const baseUrl = 'https://nosec.org/home/ajaxindexdata';
 const keykinds = {
@@ -21,15 +22,15 @@ export const route: Route = {
     parameters: { keykind: '对应文章分类' },
     name: 'Posts',
     maintainers: ['hellodword'],
-    description: `  | 分类     | 标识       |
-    | :------- | :--------- |
-    | 威胁情报 | \`threaten\` |
-    | 安全动态 | \`security\` |
-    | 漏洞预警 | \`hole\`     |
-    | 数据泄露 | \`leakage\`  |
-    | 专题报告 | \`speech\`   |
-    | 技术分析 | \`skill\`    |
-    | 安全工具 | \`tool\`     |`,
+    description: `| 分类     | 标识       |
+| :------- | :--------- |
+| 威胁情报 | \`threaten\` |
+| 安全动态 | \`security\` |
+| 漏洞预警 | \`hole\`     |
+| 数据泄露 | \`leakage\`  |
+| 专题报告 | \`speech\`   |
+| 技术分析 | \`skill\`    |
+| 安全工具 | \`tool\`     |`,
     handler,
     radar: [
         {

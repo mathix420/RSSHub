@@ -1,8 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
-import { load } from 'cheerio';
 
 // Yep http is bad, but I had no choice :(
 const rootMeta = {
@@ -34,8 +35,8 @@ export const route: Route = {
     maintainers: ['shaokeyibb'],
     handler,
     description: `| 通知公告 |
-  | :------: |
-  |   tzgg   |`,
+| :------: |
+|   tzgg   |`,
 };
 
 async function handler(ctx) {

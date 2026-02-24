@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import timezone from '@/utils/timezone';
-import { load } from 'cheerio';
 
 const baseUrl = 'https://cs.whu.edu.cn';
 
@@ -24,8 +25,8 @@ export const route: Route = {
     maintainers: ['ttyfly'],
     handler,
     description: `| 公告类型 | 学院新闻 | 学术交流 | 通知公告 | 科研进展 |
-  | -------- | -------- | -------- | -------- | -------- |
-  | 参数     | 0        | 1        | 2        | 3        |`,
+| -------- | -------- | -------- | -------- | -------- |
+| 参数     | 0        | 1        | 2        | 3        |`,
 };
 
 async function handler(ctx) {

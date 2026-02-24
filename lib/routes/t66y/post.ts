@@ -1,8 +1,10 @@
-import { Route } from '@/types';
 import * as cheerio from 'cheerio';
-import got from '@/utils/got';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
+
 import { baseUrl, parseContent } from './utils';
 
 function parseItems(tid: string, $: cheerio.CheerioAPI) {
@@ -42,15 +44,16 @@ export const route: Route = {
         supportBT: false,
         supportPodcast: false,
         supportScihub: false,
+        nsfw: true,
     },
     name: '帖子跟踪',
     maintainers: ['cnzgray'],
     handler,
-    description: `:::tip
+    description: `::: tip
   帖子 id 查找办法:
 
   打开想跟踪的帖子，比如：\`https://t66y.com/htm_data/20/1811/3286088.html\` 其中 \`3286088\` 就是帖子 id。
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

@@ -1,12 +1,13 @@
 import { load } from 'cheerio';
+
+import type { DataItem, Route } from '@/types';
 import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
-import type { Route, DataItem } from '@/types';
 
 export const route: Route = {
     path: '/article/:id',
     name: '章节',
-    url: 'www.69shuba.pro',
+    url: 'www.69shuba.cx',
     maintainers: ['eternasuno'],
     example: '/69shu/article/47117',
     parameters: { id: '小说 id, 可在对应小说页 URL 中找到' },
@@ -21,19 +22,19 @@ export const route: Route = {
     },
     radar: [
         {
-            source: ['www.69shuba.pro/book/:id.htm'],
+            source: ['www.69shuba.cx/book/:id.htm'],
             target: '/article/:id',
         },
     ],
     handler: async (ctx) => {
         const { id } = ctx.req.param();
-        const link = `https://www.69shuba.pro/book/${id}.htm`;
+        const link = `https://www.69shuba.cx/book/${id}.htm`;
         const $ = load(await get(link));
 
         const item = await Promise.all(
             $('.qustime li>a')
-                .map((_, chapter) => createItem(chapter.attribs.href))
                 .toArray()
+                .map((chapter) => createItem(chapter.attribs.href))
         );
 
         return {

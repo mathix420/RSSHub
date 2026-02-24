@@ -1,6 +1,8 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import currency from 'currency-symbol-map';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
+
 export const route: Route = {
     path: '/price/:country/:type/:id',
     categories: ['program-update'],
@@ -50,7 +52,6 @@ async function handler(ctx) {
             title: unsupported,
             item: [{ title: unsupported }],
         };
-        return;
     }
 
     let result = res.data.results.apps;

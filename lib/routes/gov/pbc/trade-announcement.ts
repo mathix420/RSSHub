@@ -1,9 +1,10 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
 import { parseDate } from '@/utils/parse-date';
-import timezone from '@/utils/timezone';
 import puppeteer from '@/utils/puppeteer';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/pbc/tradeAnnouncement',
@@ -38,15 +39,15 @@ async function handler() {
     const html = await page.evaluate(() => document.documentElement.innerHTML);
     const $ = load(html);
     const list = $('font.newslist_style')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
             const a = item.find('a[title]');
             return {
                 title: a.attr('title'),
                 link: new URL(a.attr('href'), 'http://www.pbc.gov.cn').href,
             };
-        })
-        .get();
+        });
 
     const items = await Promise.all(
         list.map((item) =>
@@ -68,7 +69,7 @@ async function handler() {
         )
     );
 
-    browser.close();
+    await browser.close();
 
     return {
         title: '中国人民银行 - 货币政策司公开市场交易公告',

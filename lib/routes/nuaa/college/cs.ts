@@ -1,9 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 import getCookie from '../utils/pypasswaf';
+
 const host = 'https://cs.nuaa.edu.cn/';
 
 const map = new Map([
@@ -33,8 +36,8 @@ export const route: Route = {
     maintainers: ['LogicJake', 'Seiry', 'qrzbing', 'Xm798'],
     handler,
     description: `| 通知公告 | 热点新闻 | 学科科研 | 教学动态 | 本科生培养 | 研究生培养 | 学生工作 |
-  | -------- | -------- | -------- | -------- | ---------- | ---------- | -------- |
-  | tzgg     | rdxw     | xkky     | jxdt     | be         | me         | xsgz     |`,
+| -------- | -------- | -------- | -------- | ---------- | ---------- | -------- |
+| tzgg     | rdxw     | xkky     | jxdt     | be         | me         | xsgz     |`,
 };
 
 async function handler(ctx) {
@@ -54,15 +57,15 @@ async function handler(ctx) {
 
     const list = $('#news_list ul li')
         .slice(0, Math.min(Number.parseInt($('.per_count', '#wp_paging_w6').text()), Number.parseInt($('.all_count', '#wp_paging_w6').slice(1).text())))
-        .map(function () {
+        .toArray()
+        .map((element) => {
             const info = {
-                title: $(this).find('a').attr('title'),
-                link: $(this).find('a').attr('href'),
-                date: $(this).find('span').text(),
+                title: $(element).find('a').attr('title'),
+                link: $(element).find('a').attr('href'),
+                date: $(element).find('span').text(),
             };
             return info;
-        })
-        .get();
+        });
 
     const out = await Promise.all(
         list.map(async (info) => {

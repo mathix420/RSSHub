@@ -1,7 +1,9 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
+
 import utils from './utils';
 
 export const route: Route = {
@@ -28,7 +30,7 @@ async function handler(ctx) {
 
     const list = $('.word > h3 > a')
         .slice(0, 10)
-        .get()
+        .toArray()
         .map((e) => $(e).attr('href'));
     const items = await utils.ProcessFeed(list, cache);
 

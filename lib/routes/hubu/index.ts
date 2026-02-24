@@ -1,8 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
 
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const handler = async (ctx) => {
@@ -90,13 +90,13 @@ export const route: Route = {
     handler,
     example: '/hubu/www/index/tzgg',
     parameters: { category: '分类，可在对应分类页 URL 中找到，默认为[通知公告](https://www.hubu.edu.cn/index/tzgg.htm)' },
-    description: `:::tip
+    description: `::: tip
   若订阅 [通知公告](https://www.hubu.edu.cn/index/tzgg.htm)，网址为 \`https://www.hubu.edu.cn/index/tzgg.htm\`。截取 \`https://www.hubu.edu.cn/\` 到末尾 \`.htm\` 的部分 \`index/tzgg\` 作为参数填入，此时路由为 [\`/hubu/www/index/tzgg\`](https://rsshub.app/hubu/www/index/tzgg)。
-  :::
+:::
 
-  | 通知公告   | 学术预告   |
-  | ---------- | ---------- |
-  | index/tzgg | index/xsyg |
+| 通知公告   | 学术预告   |
+| ---------- | ---------- |
+| index/tzgg | index/xsyg |
   `,
     categories: ['university'],
 

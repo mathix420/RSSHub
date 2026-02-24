@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
-import InvalidParameterError from '@/errors/types/invalid-parameter';
 
 export const route: Route = {
     path: '/paper/:id?',
@@ -22,8 +23,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 浙江日报 | 钱江晚报 | 美术报 | 浙江老年报 | 浙江法制报 | 江南游报 |
-  | -------- | -------- | ------ | ---------- | ---------- | -------- |
-  | zjrb     | qjwb     | msb    | zjlnb      | zjfzb      | jnyb     |`,
+| -------- | -------- | ------ | ---------- | ---------- | -------- |
+| zjrb     | qjwb     | msb    | zjlnb      | zjfzb      | jnyb     |`,
 };
 
 async function handler(ctx) {

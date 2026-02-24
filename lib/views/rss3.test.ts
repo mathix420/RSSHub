@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
+
 import rss3 from './rss3';
 
-const NETWORK = 'RSS';
+const NETWORK = 'rsshub';
 const TAG = 'RSS';
 const TYPE = 'feed';
+const PLATFORM = 'RSSHub';
 
 describe('rss3', () => {
     it('should return UMS Result', () => {
@@ -48,7 +50,7 @@ describe('rss3', () => {
                         {
                             tag: TAG,
                             type: TYPE,
-                            platform: 'example.com',
+                            platform: PLATFORM,
                             from: 'example.com',
                             to: 'example.com',
                             metadata: {
@@ -77,7 +79,7 @@ describe('rss3', () => {
                         {
                             tag: TAG,
                             type: TYPE,
-                            platform: 'example.com',
+                            platform: PLATFORM,
                             from: 'example.com',
                             to: 'example.com',
                             metadata: {
@@ -95,5 +97,26 @@ describe('rss3', () => {
             ],
         };
         expect(result).toStrictEqual(expected);
+    });
+
+    it('falls back to raw link when URL parsing fails', () => {
+        const data = {
+            item: [
+                {
+                    link: 'not-a-url',
+                    author: 'Author',
+                    description: 'Desc',
+                    pubDate: '2024-01-01T00:00:00Z',
+                    category: 'Category',
+                    title: 'Title',
+                    updated: '2024-01-02T00:00:00Z',
+                },
+            ],
+        };
+
+        const result = rss3(data);
+        expect(result.data[0].owner).toBe('not-a-url');
+        expect(result.data[0].from).toBe('not-a-url');
+        expect(result.data[0].to).toBe('not-a-url');
     });
 });

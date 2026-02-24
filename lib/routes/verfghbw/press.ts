@@ -1,6 +1,7 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -58,7 +59,8 @@ async function handler(ctx) {
     const $ = load(data);
 
     const list = $('.pressListItem')
-        .map((_, item) => {
+        .toArray()
+        .map((item) => {
             item = $(item);
 
             const title = item.find('.pressListItemTeaser > h3').text().trim();
@@ -72,8 +74,7 @@ async function handler(ctx) {
                 description: item.find('.pressListItemTeaser').html(),
                 pubDate: parseDate(item.find('.pressListItemDate > span').text(), 'DD.MM.YYYY'),
             };
-        })
-        .get();
+        });
 
     return {
         title: 'Verfassungsgerichtshof Baden-Württemberg - Pressemitteilungen',

@@ -1,9 +1,12 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
+
 import getCookie from '../utils/pypasswaf';
+
 const host = 'https://cae.nuaa.edu.cn/';
 
 const map = new Map([
@@ -41,15 +44,15 @@ async function handler(ctx) {
 
     const list = $('#wp_news_w6 ul li')
         .slice(0, 10)
-        .map(function () {
+        .toArray()
+        .map((element) => {
             const info = {
-                title: $(this).find('a').text(),
-                link: $(this).find('a').attr('href'),
-                date: $(this).find('span').text(),
+                title: $(element).find('a').text(),
+                link: $(element).find('a').attr('href'),
+                date: $(element).find('span').text(),
             };
             return info;
-        })
-        .get();
+        });
 
     const out = await Promise.all(
         list.map(async (info) => {

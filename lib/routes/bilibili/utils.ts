@@ -1,12 +1,11 @@
-import { config } from '@/config';
-import md5 from '@/utils/md5';
 import CryptoJS from 'crypto-js';
 
-function iframe(aid: any, page?: any, bvid?: any) {
-    return `<iframe src="https://www.bilibili.com/blackboard/html5mobileplayer.html?${bvid ? `bvid=${bvid}` : `aid=${aid}`}${
-        page ? `&page=${page}` : ''
-    }&high_quality=1&autoplay=0" width="650" height="477" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>`;
-}
+import { config } from '@/config';
+import md5 from '@/utils/md5';
+import ofetch from '@/utils/ofetch';
+
+import { renderDescription } from './templates/description';
+import type { MediaResult, ResultResponse, SeasonResult } from './types';
 
 // a
 function randomHexStr(length) {
@@ -197,8 +196,114 @@ function addDmVerifyInfoWithInter(params: string, dmImgList: string, dmImgInter:
 
 const bvidTime = 1_589_990_400;
 
+/**
+ * 获取番剧信息并缓存
+ *
+ * @param {string} id - 番剧 ID。
+ * @param cache - 缓存 module。
+ * @returns {Promise<MediaResult>} 番剧信息。
+ */
+export const getBangumi = (id: string, cache): Promise<MediaResult> =>
+    cache.tryGet(
+        `bilibili:getBangumi:${id}`,
+        async () => {
+            const res = await ofetch<ResultResponse<MediaResult>>('https://api.bilibili.com/pgc/view/web/media', {
+                query: {
+                    media_id: id,
+                },
+            });
+            if (res.result.share_url === undefined) {
+                // reference: https://api.bilibili.com/pgc/review/user?media_id=${id}
+                res.result.share_url = `https://www.bilibili.com/bangumi/media/md${res.result.media_id}`;
+            }
+            return res.result;
+        },
+        config.cache.routeExpire,
+        false
+    ) as Promise<MediaResult>;
+
+/**
+ * 获取番剧分集信息并缓存
+ *
+ * @param {string} id - 番剧 ID。
+ * @param cache - 缓存 module。
+ * @returns {Promise<SeasonResult>} 番剧分集信息。
+ */
+export const getBangumiItems = (id: string, cache): Promise<SeasonResult> =>
+    cache.tryGet(
+        `bilibili:getBangumiItems:${id}`,
+        async () => {
+            const res = await ofetch<ResultResponse<SeasonResult>>('https://api.bilibili.com/pgc/web/season/section', {
+                query: {
+                    season_id: id,
+                },
+            });
+            return res.result;
+        },
+        config.cache.routeExpire,
+        false
+    ) as Promise<SeasonResult>;
+
+/**
+ * Render the UGC (user-generated content) description.
+ *
+ * @param {boolean} embed - Whether to embed the video.
+ * @param {string} img - Image URL to include in the description.
+ * @param {string} description - UGC text description.
+ * @param {string} [aid] - Optional UGC aid.
+ * @param {string} [cid] - Optional UGC cid.
+ * @param {string} [bvid] - Optional UGC bvid.
+ * @returns {string} Rendered UGC description.
+ *
+ * @see https://player.bilibili.com/ for details.
+ */
+export const renderUGCDescription = (embed: boolean, img: string, description: string, aid?: string, cid?: string, bvid?: string): string => {
+    // docs: https://player.bilibili.com/
+    const rendered = renderDescription({
+        embed,
+        ugc: true,
+        aid,
+        cid,
+        bvid,
+        img: img.replace('http://', 'https://'),
+        description,
+    });
+    return rendered;
+};
+
+/**
+ * Render the OGV (original video) description.
+ *
+ * @param {boolean} embed - Whether to embed the video.
+ * @param {string} img - Image URL to include in the description.
+ * @param {string} description - OGV text description.
+ * @param {string} [seasonId] - Optional OGV season ID.
+ * @param {string} [episodeId] - Optional OGV episode ID.
+ * @returns {string} Rendered OGV description.
+ *
+ * @see https://player.bilibili.com/ for details.
+ */
+export const renderOGVDescription = (embed: boolean, img: string, description: string, seasonId?: string, episodeId?: string): string => {
+    // docs: https://player.bilibili.com/
+    const rendered = renderDescription({
+        embed,
+        ogv: true,
+        seasonId,
+        episodeId,
+        img: img.replace('http://', 'https://'),
+        description,
+    });
+    return rendered;
+};
+
+export function getVideoUrl(bvid: string): string;
+export function getVideoUrl(bvid?: string): string | undefined;
+export function getVideoUrl(bvid?: string): string | undefined {
+    return bvid ? `https://www.bilibili.com/blackboard/newplayer.html?isOutside=true&autoplay=true&danmaku=true&muted=false&highQuality=true&bvid=${bvid}` : undefined;
+}
+export const getLiveUrl = (roomId?: string) => (roomId ? `https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=${roomId}` : undefined);
+
 export default {
-    iframe,
     lsid,
     _uuid,
     hexsign,
@@ -209,4 +314,9 @@ export default {
     addDmVerifyInfoWithInter,
     bvidTime,
     addRenderData,
+    getBangumi,
+    getBangumiItems,
+    renderUGCDescription,
+    renderOGVDescription,
+    getVideoUrl,
 };

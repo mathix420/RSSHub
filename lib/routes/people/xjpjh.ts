@@ -1,8 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import * as url from 'node:url';
 
 const host = 'http://jhsjk.people.cn';
 
@@ -54,19 +54,19 @@ async function handler(ctx) {
 
     const list = $('ul.list_14.p1_2.clearfix li')
         .slice(0, 10)
-        .map(function () {
+        .toArray()
+        .map((element) => {
             const info = {
-                title: $(this).find('a').text(),
-                link: $(this).find('a').attr('href'),
+                title: $(element).find('a').text(),
+                link: $(element).find('a').attr('href'),
             };
             return info;
-        })
-        .get();
+        });
 
     const out = await Promise.all(
         list.map(async (info) => {
             const title = info.title;
-            const itemUrl = url.resolve(host, info.link);
+            const itemUrl = new URL(info.link, host).href;
 
             const cacheIn = await cache.get(itemUrl);
             if (cacheIn) {

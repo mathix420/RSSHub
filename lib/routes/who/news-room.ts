@@ -1,7 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
@@ -29,15 +30,15 @@ export const route: Route = {
     url: 'who.int/news',
     description: `Category
 
-  | Feature stories | Commentaries |
-  | --------------- | ------------ |
-  | feature-stories | commentaries |
+| Feature stories | Commentaries |
+| --------------- | ------------ |
+| feature-stories | commentaries |
 
   Language
 
-  | English | العربية | 中文 | Français | Русский | Español | Português |
-  | ------- | ------- | ---- | -------- | ------- | ------- | --------- |
-  | en      | ar      | zh   | fr       | ru      | es      | pt        |`,
+| English | العربية | 中文 | Français | Русский | Español | Português |
+| ------- | ------- | ---- | -------- | ------- | ------- | --------- |
+| en      | ar      | zh   | fr       | ru      | es      | pt        |`,
 };
 
 async function handler(ctx) {
@@ -68,16 +69,14 @@ async function handler(ctx) {
             pubDate: parseDate(item.PublicationDateAndTime),
         }));
     } else {
-        list = list
-            .map((_, item) => {
-                item = $(item);
-                const link = item.attr('href');
+        list = list.toArray().map((item) => {
+            item = $(item);
+            const link = item.attr('href');
 
-                return {
-                    link: `${link.indexOf('http') === 0 ? '' : rootUrl}${item.attr('href')}`,
-                };
-            })
-            .get();
+            return {
+                link: `${link.indexOf('http') === 0 ? '' : rootUrl}${item.attr('href')}`,
+            };
+        });
     }
 
     const items = await Promise.all(

@@ -1,9 +1,10 @@
-import { Route } from '@/types';
-import cache from '@/utils/cache';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import ofetch from '@/utils/ofetch';
 import { parseDate } from '@/utils/parse-date';
 import { fetchArticle } from '@/utils/wechat-mp';
-import ofetch from '@/utils/ofetch';
 
 const baseTitle = '上海交通大学研究生招生网招考信息';
 const baseUrl = 'https://yzb.sjtu.edu.cn/index/zkxx/';
@@ -25,8 +26,8 @@ export const route: Route = {
     maintainers: ['stdrc'],
     handler,
     description: `| 博士招生 | 硕士招生 | 港澳台招生 | 考点信息 | 院系动态 |
-  | -------- | -------- | ---------- | -------- | -------- |
-  | bszs     | sszs     | gatzs      | kdxx     | yxdt     |`,
+| -------- | -------- | ---------- | -------- | -------- |
+| bszs     | sszs     | gatzs      | kdxx     | yxdt     |`,
 };
 
 async function handler(ctx) {

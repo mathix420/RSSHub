@@ -1,9 +1,10 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import timezone from '@/utils/timezone';
 import { parseDate } from '@/utils/parse-date';
+import timezone from '@/utils/timezone';
 
 export const route: Route = {
     path: '/xuzhou/hrss/:category?',
@@ -22,8 +23,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| 通知公告 | 要闻动态 | 县区动态 | 事业招聘 | 企业招聘 | 政声传递 |
-  | -------- | -------- | -------- | -------- | -------- | -------- |
-  |          | 001001   | 001002   | 001004   | 001005   | 001006   |`,
+| -------- | -------- | -------- | -------- | -------- | -------- |
+|          | 001001   | 001002   | 001004   | 001005   | 001006   |`,
 };
 
 async function handler(ctx) {

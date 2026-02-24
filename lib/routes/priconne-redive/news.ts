@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import { parseDate } from '@/utils/parse-date';
-import got from '@/utils/got';
-import cache from '@/utils/cache';
 import { load } from 'cheerio';
+
+import type { Route } from '@/types';
+import cache from '@/utils/cache';
+import got from '@/utils/got';
+import { parseDate } from '@/utils/parse-date';
 
 export const route: Route = {
     path: '/news/:server?',
@@ -37,9 +38,9 @@ export const route: Route = {
     url: 'priconne-redive.jp/news',
     description: `服务器
 
-  | 国服  | 台服  | 日服  |
-  | ----- | ----- | ---- |
-  | zh-cn | zh-tw | jp   |`,
+| 国服  | 台服  | 日服  |
+| ----- | ----- | ---- |
+| zh-cn | zh-tw | jp   |`,
 };
 
 async function handler(ctx) {
@@ -115,7 +116,7 @@ async function handler(ctx) {
                 url: 'http://www.princessconnect.so-net.tw/news',
             });
             const $ = load(response.data);
-            const list = $('.news_con dl dd').get();
+            const list = $('.news_con dl dd').toArray();
 
             const items = await Promise.all(
                 list.map((item) => {

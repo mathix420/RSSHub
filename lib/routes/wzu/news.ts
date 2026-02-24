@@ -1,8 +1,8 @@
-import { Route } from '@/types';
+import { load } from 'cheerio';
+
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
 import got from '@/utils/got';
-import { load } from 'cheerio';
-import { URL } from 'url';
 import { parseDate } from '@/utils/parse-date';
 
 /* 新闻列表
@@ -72,22 +72,18 @@ async function handler(ctx) {
     return {
         title: newsTitle,
         link: newsLink,
-        description: '温州大学' + ' - ' + newsTitle,
-        item:
-            list &&
-            list
-                .map(async (item) => {
-                    const $ = load(list[item]);
-                    const $a1 = $('li>a');
-                    const $originUrl = $a1.attr('href');
-                    const $itemUrl = new URL($originUrl, baseUrl).href;
-                    return {
-                        title: $a1.attr('title'),
-                        description: await cache.tryGet($itemUrl, () => loadContent($itemUrl)),
-                        pubDate: parseDate($('li>samp').text(), 'YYYY-MM-DD'),
-                        link: $itemUrl,
-                    };
-                })
-                .get(),
+        description: `温州大学 - ${newsTitle}`,
+        item: list.toArray().map(async (item) => {
+            const $ = load(item);
+            const $a1 = $('li>a');
+            const $originUrl = $a1.attr('href');
+            const $itemUrl = new URL($originUrl, baseUrl).href;
+            return {
+                title: $a1.attr('title'),
+                description: await cache.tryGet($itemUrl, () => loadContent($itemUrl)),
+                pubDate: parseDate($('li>samp').text(), 'YYYY-MM-DD'),
+                link: $itemUrl,
+            };
+        }),
     };
 }

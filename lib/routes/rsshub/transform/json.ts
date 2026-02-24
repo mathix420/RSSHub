@@ -1,8 +1,9 @@
-import { Route } from '@/types';
-import got from '@/utils/got';
 import { load } from 'cheerio';
+
 import { config } from '@/config';
 import ConfigNotFoundError from '@/errors/types/config-not-found';
+import type { Route } from '@/types';
+import got from '@/utils/got';
 
 function jsonGet(obj, attr) {
     if (typeof attr !== 'string') {
@@ -49,25 +50,25 @@ export const route: Route = {
 | \`itemDesc\`       | The JSON Path as \`description\` in \`item\` | \`string\`        | None                                       |
 | \`itemPubDate\`    | The JSON Path as \`pubDate\` in \`item\`     | \`string\`        | None                                       |
 
-:::tip
+::: tip
 JSON Path only supports format like \`a.b.c\`. if you need to access arrays, like \`a[0].b\`, you can write it as \`a.0.b\`.
 :::
 
   Parameters parsing in the above example:
 
-  | Parameter     | Value                                                                    |
-  | ------------- | ------------------------------------------------------------------------ |
-  | \`url\`         | \`https://api.github.com/repos/ginuerzh/gost/releases\`                    |
-  | \`routeParams\` | \`title=Gost releases&itemTitle=tag_name&itemLink=html_url&itemDesc=body\` |
+| Parameter     | Value                                                                    |
+| ------------- | ------------------------------------------------------------------------ |
+| \`url\`         | \`https://api.github.com/repos/ginuerzh/gost/releases\`                    |
+| \`routeParams\` | \`title=Gost releases&itemTitle=tag_name&itemLink=html_url&itemDesc=body\` |
 
   Parsing of \`routeParams\` parameter:
 
-  | Parameter   | Value           |
-  | ----------- | --------------- |
-  | \`title\`     | \`Gost releases\` |
-  | \`itemTitle\` | \`tag_name\`      |
-  | \`itemLink\`  | \`html_url\`      |
-  | \`itemDesc\`  | \`body\`          |`,
+| Parameter   | Value           |
+| ----------- | --------------- |
+| \`title\`     | \`Gost releases\` |
+| \`itemTitle\` | \`tag_name\`      |
+| \`itemLink\`  | \`html_url\`      |
+| \`itemDesc\`  | \`body\`          |`,
 };
 
 async function handler(ctx) {

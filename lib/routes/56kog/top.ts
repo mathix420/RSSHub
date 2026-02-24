@@ -1,6 +1,7 @@
-import { Route } from '@/types';
+import type { Route } from '@/types';
 import cache from '@/utils/cache';
-import { rootUrl, fetchItems } from './util';
+
+import { fetchItems, rootUrl } from './util';
 
 export const route: Route = {
     path: '/top/:category?',
@@ -19,8 +20,8 @@ export const route: Route = {
     maintainers: ['nczitzk'],
     handler,
     description: `| [周点击榜](https://www.56kog.com/top/weekvisit.html) | [总收藏榜](https://www.56kog.com/top/goodnum.html) | [最新 入库](https://www.56kog.com/top/postdate.html) |
-  | ---------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
-  | weekvisit                                            | goodnum                                            | postdate                                             |`,
+| ---------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| weekvisit                                            | goodnum                                            | postdate                                             |`,
 };
 
 async function handler(ctx) {
